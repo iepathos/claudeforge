@@ -10,12 +10,14 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.version }}
     
     steps:
@@ -52,15 +54,14 @@ jobs:
     
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.get_version.outputs.version }}
-        release_name: Release ${{ steps.get_version.outputs.version }}
-        body_path: release_notes.md
-        draft: false
-        prerelease: false
+      run: |
+        gh release create "${{ steps.get_version.outputs.version }}" \
+          --title "Release ${{ steps.get_version.outputs.version }}" \
+          --notes-file release_notes.md \
+          --draft=false \
+          --prerelease=false
 
   build-release:
     name: Build Release
@@ -142,46 +143,16 @@ jobs:
           sha256sum claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
         fi
     
-    - name: Upload Release Asset (tar.gz)
-      if: matrix.archive == 'tar.gz'
-      uses: actions/upload-release-asset@v1
+    - name: Upload Release Assets
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./claudeforge-${{ matrix.target }}.tar.gz
-        asset_name: claudeforge-${{ matrix.target }}.tar.gz
-        asset_content_type: application/gzip
-    
-    - name: Upload Release Asset (zip)
-      if: matrix.archive == 'zip'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./claudeforge-${{ matrix.target }}.zip
-        asset_name: claudeforge-${{ matrix.target }}.zip
-        asset_content_type: application/zip
-    
-    - name: Upload Checksum (tar.gz)
-      if: matrix.archive == 'tar.gz'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./claudeforge-${{ matrix.target }}.tar.gz.sha256
-        asset_name: claudeforge-${{ matrix.target }}.tar.gz.sha256
-        asset_content_type: text/plain
-    
-    - name: Upload Checksum (zip)
-      if: matrix.archive == 'zip'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./claudeforge-${{ matrix.target }}.zip.sha256
-        asset_name: claudeforge-${{ matrix.target }}.zip.sha256
-        asset_content_type: text/plain
+      run: |
+        if [[ "${{ matrix.archive }}" == "tar.gz" ]]; then
+          gh release upload "${{ needs.create-release.outputs.version }}" \
+            "claudeforge-${{ matrix.target }}.tar.gz" \
+            "claudeforge-${{ matrix.target }}.tar.gz.sha256"
+        else
+          gh release upload "${{ needs.create-release.outputs.version }}" \
+            "claudeforge-${{ matrix.target }}.zip" \
+            "claudeforge-${{ matrix.target }}.zip.sha256"
+        fi
