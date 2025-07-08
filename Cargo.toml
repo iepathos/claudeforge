@@ -30,7 +30,7 @@ dirs = "5"
 tempfile = "3"
 
 # Git operations
-git2 = "0.18"
+git2 = "0.20"
 
 # HTTP client
 reqwest = { version = "0.11", features = ["json"] }
