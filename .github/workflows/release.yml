@@ -140,9 +140,17 @@ jobs:
     - name: Generate checksums
       run: |
         if [[ "${{ matrix.archive }}" == "tar.gz" ]]; then
-          sha256sum claudeforge-${{ matrix.target }}.tar.gz > claudeforge-${{ matrix.target }}.tar.gz.sha256
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            shasum -a 256 claudeforge-${{ matrix.target }}.tar.gz > claudeforge-${{ matrix.target }}.tar.gz.sha256
+          else
+            sha256sum claudeforge-${{ matrix.target }}.tar.gz > claudeforge-${{ matrix.target }}.tar.gz.sha256
+          fi
         else
-          sha256sum claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            shasum -a 256 claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
+          else
+            sha256sum claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
+          fi
         fi
     
     - name: Upload Release Assets
