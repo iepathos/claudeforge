@@ -6,13 +6,13 @@ This document tracks the status of all specification documents in the project.
 
 | Spec | Feature | Status |
 |------|---------|--------|
-| *None yet* | - | - |
+| 010 | ClaudeForge CLI | ✅ Complete |
 
 ## In Progress / Planned Specs
 
 | Spec | Feature | Status |
 |------|---------|--------|
-| 010 | ClaudeForge CLI | ⬜ Planned |
+| *None yet* | - | - |
 
 ## Notes
 
