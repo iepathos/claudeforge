@@ -1,5 +1,9 @@
 # ClaudeForge CLI
 
+[![CI](https://github.com/iepathos/claudeforge/actions/workflows/ci.yml/badge.svg)](https://github.com/iepathos/claudeforge/actions/workflows/ci.yml)
+[![Security](https://github.com/iepathos/claudeforge/actions/workflows/security.yml/badge.svg)](https://github.com/iepathos/claudeforge/actions/workflows/security.yml)
+[![Release](https://github.com/iepathos/claudeforge/actions/workflows/release.yml/badge.svg)](https://github.com/iepathos/claudeforge/actions/workflows/release.yml)
+
 A command-line tool that streamlines the creation of new projects optimized for development with Claude Code. ClaudeForge provides a simple interface to scaffold projects in multiple languages using curated templates that include comprehensive AI development guidelines, proper gitignore configurations, and best practices baked into the project structure.
 
 ## 🚀 Quick Start
