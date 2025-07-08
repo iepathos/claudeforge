@@ -23,7 +23,7 @@ async fn test_create_rust_project() {
         }
         Err(e) => {
             // If template repositories don't exist, this is expected
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 }
@@ -50,7 +50,7 @@ async fn test_create_go_project() {
         }
         Err(e) => {
             // If template repositories don't exist, this is expected
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 }
