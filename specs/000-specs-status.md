@@ -7,12 +7,12 @@ This document tracks the status of all specification documents in the project.
 | Spec | Feature | Status |
 |------|---------|--------|
 | 010 | ClaudeForge CLI | ✅ Complete |
+| 020 | GitHub Actions Workflows | ✅ Complete |
 
 ## In Progress / Planned Specs
 
 | Spec | Feature | Status |
 |------|---------|--------|
-| 020 | GitHub Actions Workflows | ⬜ Planned |
 
 ## Notes
 
