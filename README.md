@@ -1,237 +1,286 @@
-# Rust Claude Code Starter Template
+# ClaudeForge CLI
 
-A comprehensive starter template for Rust projects optimized for development with Claude Code. This template provides a solid foundation with best practices, tooling configurations, and development guidelines for building robust Rust applications.
+A command-line tool that streamlines the creation of new projects optimized for development with Claude Code. ClaudeForge provides a simple interface to scaffold projects in multiple languages using curated templates that include comprehensive AI development guidelines, proper gitignore configurations, and best practices baked into the project structure.
 
 ## 🚀 Quick Start
 
-1. **Clone this template**
-   ```bash
-   git clone https://github.com/yourusername/rust-claude-code.git my-rust-project
-   cd my-rust-project
-   ```
+### Installation
 
-2. **Initialize your project**
-   ```bash
-   # Remove template git history
-   rm -rf .git
-   git init
-   
-   # Create initial Cargo.toml
-   cargo init --name my-project
-   ```
+```bash
+# Install from crates.io (when published)
+cargo install claudeforge
 
-3. **Install development dependencies**
-   ```bash
-   # Install rustfmt and clippy
-   rustup component add rustfmt clippy
-   
-   # Install cargo-watch for development
-   cargo install cargo-watch
-   
-   # Install additional tools (optional)
-   cargo install cargo-tarpaulin  # Code coverage
-   cargo install cargo-audit      # Security audits
-   cargo install cargo-outdated   # Dependency updates
-   ```
+# Or build from source
+git clone https://github.com/iepathos/claudeforge.git
+cd claudeforge
+cargo build --release
+```
+
+### Create Your First Project
+
+```bash
+# Create a new Rust project
+claudeforge new rust my-awesome-project
+
+# Create a Go project in a specific directory
+claudeforge new go my-service --directory ~/projects
+
+# Skip confirmation prompts
+claudeforge new rust my-project --yes
+```
+
+## 📋 Commands
+
+### `new` - Create a new project
+```bash
+claudeforge new <LANGUAGE> <NAME> [OPTIONS]
+
+# Arguments:
+#   <LANGUAGE>  Language template to use (rust, go)
+#   <NAME>      Project name
+
+# Options:
+#   -d, --directory <DIR>  Target directory (defaults to current directory)
+#   -y, --yes             Skip interactive prompts
+```
+
+### `list` - List available templates
+```bash
+claudeforge list
+
+# Shows all available templates with descriptions
+```
+
+### `update` - Update cached templates
+```bash
+claudeforge update
+
+# Updates all templates to their latest versions
+```
+
+### `version` - Show version information
+```bash
+claudeforge version
+```
+
+## 🎯 Features
+
+- **Multi-language support**: Currently supports Rust and Go templates
+- **AI-optimized templates**: Pre-configured with CLAUDE.md guidelines
+- **Git integration**: Automatically initializes clean git repositories
+- **Template customization**: Replaces project placeholders with your values
+- **Offline support**: Caches templates locally for faster project creation
+- **Cross-platform**: Works on macOS, Linux, and Windows
 
 ## 📁 Project Structure
 
+ClaudeForge creates projects with the following structure:
+
 ```
-my-rust-project/
+my-project/
 ├── src/                    # Source code
-│   ├── main.rs            # Binary entry point
-│   ├── lib.rs             # Library entry point
-│   └── modules/           # Application modules
-├── tests/                 # Integration tests
-├── benches/               # Benchmarks
-├── examples/              # Usage examples
-├── docs/                  # Documentation
-├── .gitignore             # Git ignore rules
-├── CLAUDE.md              # Claude Code guidelines
-├── Cargo.toml             # Project manifest
-└── README.md              # This file
+├── tests/                  # Test files
+├── CLAUDE.md              # Claude Code development guidelines
+├── .gitignore             # Language-specific gitignore
+├── README.md              # Project documentation
+├── Cargo.toml             # Rust: Project manifest
+└── go.mod                 # Go: Module definition
 ```
 
-## 🛠️ Development Workflow
+## 🛠️ Development
 
-### Running the project
+### Prerequisites
+
+- Rust 1.70.0 or later
+- Git (for repository operations)
+
+### Building from Source
+
 ```bash
-# Build and run
-cargo run
+# Clone the repository
+git clone https://github.com/iepathos/claudeforge.git
+cd claudeforge
 
-# Run with hot reloading
-cargo watch -x run
+# Build the project
+cargo build --release
 
 # Run tests
 cargo test
 
-# Run with all features
-cargo run --all-features
+# Install locally
+cargo install --path .
 ```
 
-### Code Quality
+### Development Commands
+
 ```bash
-# Format code
+# Run with just
+just fmt      # Format code
+just lint     # Run clippy
+just test     # Run all tests
+just build    # Build release binary
+
+# Or use cargo directly
 cargo fmt
-
-# Run linter
 cargo clippy -- -D warnings
-
-# Check without building
-cargo check
-
-# Run security audit
-cargo audit
-```
-
-### Testing
-```bash
-# Run all tests
 cargo test
-
-# Run tests with output
-cargo test -- --nocapture
-
-# Run specific test
-cargo test test_name
-
-# Generate code coverage
-cargo tarpaulin --out Html
+cargo build --release
 ```
 
 ## 🤖 Claude Code Integration
 
-This template includes a comprehensive `CLAUDE.md` file that provides:
+Each generated project includes a comprehensive `CLAUDE.md` file that provides:
 
 - **Architecture guidelines**: Error handling, concurrency patterns, and configuration management
 - **Code style standards**: Documentation, logging, and testing requirements
-- **Development patterns**: Best practices and anti-patterns specific to Rust
+- **Development patterns**: Best practices and anti-patterns specific to each language
 - **Example prompts**: How to effectively communicate with Claude for various tasks
 
-### Key Features for Claude Development
+### Template Features
 
-1. **Structured Error Handling**
-   - Uses `Result<T, E>` types consistently
-   - Includes examples with `anyhow` and `thiserror`
+**Rust Templates:**
+- Pre-configured `Cargo.toml` with common dependencies
+- Async/await support with tokio
+- Comprehensive error handling with `anyhow`
+- Testing setup with unit and integration tests
+- CLI argument parsing with `clap`
 
-2. **Async/Await Support**
-   - Pre-configured for `tokio` runtime
-   - Examples for concurrent operations
+**Go Templates:**
+- Modern Go module structure
+- Context-aware error handling
+- Structured logging setup
+- Testing patterns and examples
+- CLI framework integration
 
-3. **Comprehensive Testing**
-   - Unit test templates
-   - Property-based testing with `proptest`
-   - Integration test structure
+## 📦 Template Registry
 
-4. **Documentation Standards**
-   - Rustdoc comment templates
-   - Example-driven documentation
-
-## 📦 Recommended Dependencies
-
-Add these to your `Cargo.toml` as needed:
+ClaudeForge uses a registry system to manage templates:
 
 ```toml
-[dependencies]
-# Async runtime
-tokio = { version = "1", features = ["full"] }
+# Built-in templates
+[[templates]]
+name = "rust-claude-code"
+language = "rust"
+repository = "https://github.com/iepathos/rust-claude-code"
+description = "Comprehensive Rust starter template with Claude Code guidelines"
 
-# Error handling
-anyhow = "1"
-thiserror = "1"
-
-# Serialization
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-
-# Logging
-tracing = "0.1"
-tracing-subscriber = "0.3"
-
-# CLI
-clap = { version = "4", features = ["derive"] }
-
-# HTTP client
-reqwest = { version = "0.11", features = ["json"] }
-
-[dev-dependencies]
-# Testing
-proptest = "1"
-mockall = "0.11"
-criterion = "0.5"
-tempfile = "3"
+[[templates]]
+name = "go-claude-code"
+language = "go"
+repository = "https://github.com/iepathos/go-claude-code"
+description = "Go project template optimized for Claude Code development"
 ```
 
 ## 🔧 Configuration
 
-### Environment Variables
+### Global Configuration
 
-Create a `.env` file for local development:
+Create `~/.config/claudeforge/config.toml`:
 
-```env
-# Application settings
-RUST_LOG=debug
-DATABASE_URL=postgresql://localhost/myapp
-API_KEY=your_api_key_here
+```toml
+[defaults]
+author_name = "Your Name"
+author_email = "your.email@example.com"
+default_directory = "~/projects"
+
+[templates]
+cache_directory = "~/.cache/claudeforge"
+auto_update = true
+update_interval_days = 7
 ```
 
-### VS Code Settings
+### Template Customization
 
-Recommended `.vscode/settings.json`:
+Templates support placeholder replacement:
 
-```json
-{
-    "rust-analyzer.cargo.features": ["all"],
-    "rust-analyzer.checkOnSave.command": "clippy",
-    "editor.formatOnSave": true,
-    "[rust]": {
-        "editor.defaultFormatter": "rust-lang.rust-analyzer"
-    }
-}
-```
+- `{{PROJECT_NAME}}` - Project name
+- `{{AUTHOR_NAME}}` - Author name from git config
+- `{{AUTHOR_EMAIL}}` - Author email from git config
+- `{{CURRENT_DATE}}` - Current date (YYYY-MM-DD)
 
-## 🚀 Building for Production
+## 🚀 Example Usage
+
+### Creating a Rust Web Service
 
 ```bash
-# Build release version
-cargo build --release
+claudeforge new rust my-web-service
+cd my-web-service
 
-# Run release version
-cargo run --release
-
-# Create optimized binary
-RUSTFLAGS="-C target-cpu=native" cargo build --release
+# The project is ready for Claude Code development
+claude code .
 ```
 
-## 📚 Learning Resources
+### Creating a Go CLI Tool
 
-- [The Rust Programming Language Book](https://doc.rust-lang.org/book/)
-- [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
-- [Async Programming in Rust](https://rust-lang.github.io/async-book/)
-- [The Rustonomicon](https://doc.rust-lang.org/nomicon/)
+```bash
+claudeforge new go my-cli-tool --directory ~/work/projects
+cd ~/work/projects/my-cli-tool
+
+# Start developing immediately
+go run main.go
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**Template not found:**
+```bash
+# Update template cache
+claudeforge update
+
+# List available templates
+claudeforge list
+```
+
+**Git not found:**
+```bash
+# Install git on your system
+# macOS: brew install git
+# Ubuntu: sudo apt install git
+# Windows: Download from git-scm.com
+```
+
+**Permission denied:**
+```bash
+# Ensure you have write permissions to the target directory
+chmod +w target-directory
+```
 
 ## 🤝 Contributing
 
-When contributing to this template:
+We welcome contributions to ClaudeForge! Please see our contribution guidelines:
 
-1. Follow the guidelines in `CLAUDE.md`
-2. Ensure all tests pass: `cargo test`
-3. Run formatters: `cargo fmt`
-4. Check lints: `cargo clippy`
-5. Update documentation as needed
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes following the guidelines in `CLAUDE.md`
+4. Ensure all tests pass: `just test`
+5. Submit a pull request
+
+### Adding New Templates
+
+To add support for a new language:
+
+1. Create a template repository with the language structure
+2. Add template configuration to `src/config/templates.toml`
+3. Test the template creation process
+4. Update documentation
 
 ## 📝 License
 
-This template is provided as-is for use in your own projects. Customize the license as needed for your specific use case.
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🎯 Roadmap
+
+- [ ] Additional language templates (Python, JavaScript, TypeScript)
+- [ ] Custom template support from local directories
+- [ ] Template versioning and rollback
+- [ ] Interactive template selection
+- [ ] Plugin system for custom processors
+- [ ] Integration with popular project hosting platforms
 
 ---
 
-## 🎯 Next Steps
+**Happy coding with ClaudeForge! 🔨🤖**
 
-1. **Customize `Cargo.toml`** with your project details
-2. **Update this README** with project-specific information
-3. **Review `CLAUDE.md`** for development guidelines
-4. **Set up CI/CD** with GitHub Actions or similar
-5. **Start building** your Rust application!
-
-Happy coding with Rust and Claude! 🦀🤖
+Create better projects faster with AI-optimized templates and get straight to building amazing software.
