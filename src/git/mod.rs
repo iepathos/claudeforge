@@ -51,7 +51,7 @@ pub fn add_all_and_commit(repo_path: &Path, message: &str) -> Result<()> {
 }
 
 /// Get git signature from config or use default
-fn get_signature(repo: &Repository) -> Result<Signature> {
+fn get_signature(repo: &Repository) -> Result<Signature<'_>> {
     let config = repo.config()?;
 
     let name = config
