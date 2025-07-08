@@ -12,7 +12,7 @@ This document tracks the status of all specification documents in the project.
 
 | Spec | Feature | Status |
 |------|---------|--------|
-| *None yet* | - | - |
+| 020 | GitHub Actions Workflows | ⬜ Planned |
 
 ## Notes
 
