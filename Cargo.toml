@@ -18,7 +18,7 @@ tokio = { version = "1", features = ["full"] }
 
 # Error handling
 anyhow = "1"
-thiserror = "1"
+thiserror = "2"
 
 # Serialization
 serde = { version = "1", features = ["derive"] }
