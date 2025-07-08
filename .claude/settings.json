@@ -64,7 +64,8 @@
         "Bash(/dev/null)",
         "Bash(touch:*)",
         "Bash(time:*)",
-        "Bash(jq:*)"
+        "Bash(jq:*)",
+        "Bash(cargo deny check:*)"
       ],
       "deny": []
     },
