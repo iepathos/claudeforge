@@ -35,9 +35,9 @@ async fn copy_dir_recursive_inner(src: &Path, dst: &Path, exclude: Option<&[&str
         if entry_path.is_dir() {
             Box::pin(copy_dir_recursive_inner(&entry_path, &dst_path, exclude)).await?;
         } else {
-            fs::copy(&entry_path, &dst_path).await.with_context(|| {
-                format!("Failed to copy file: {entry_path:?} to {dst_path:?}")
-            })?;
+            fs::copy(&entry_path, &dst_path)
+                .await
+                .with_context(|| format!("Failed to copy file: {entry_path:?} to {dst_path:?}"))?;
         }
     }
 

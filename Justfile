@@ -183,6 +183,10 @@ new-example NAME:
 ci: fmt-check lint test doc-check
     @echo "All CI checks passed!"
 
+# Run CI checks with security audit
+ci-local: fmt-check lint test doc-check audit
+    @echo "Local CI simulation completed!"
+
 # Pre-commit hook simulation
 pre-commit: fmt lint test
     @echo "Pre-commit checks passed!"
