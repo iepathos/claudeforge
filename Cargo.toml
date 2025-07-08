@@ -33,7 +33,7 @@ tempfile = "3"
 git2 = "0.20"
 
 # HTTP client
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.12", features = ["json"] }
 
 # Utilities
 chrono = "0.4"
