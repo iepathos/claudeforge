@@ -6,7 +6,22 @@ workspace-default-features = "allow"
 external-default-features = "allow"
 allow = []
 deny = []
-skip = []
+skip = [
+    { name = "getrandom" },
+    { name = "regex-automata" },
+    { name = "regex-syntax" },
+    { name = "wasi" },
+    { name = "windows-sys" },
+    { name = "windows-targets" },
+    { name = "windows_aarch64_gnullvm" },
+    { name = "windows_aarch64_msvc" },
+    { name = "windows_i686_gnu" },
+    { name = "windows_i686_gnullvm" },
+    { name = "windows_i686_msvc" },
+    { name = "windows_x86_64_gnu" },
+    { name = "windows_x86_64_gnullvm" },
+    { name = "windows_x86_64_msvc" },
+]
 skip-tree = []
 
 [advisories]
@@ -17,9 +32,14 @@ yanked = "warn"
 ignore = []
 
 [licenses]
-allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-DFS-2016", "GPL-3.0", "Unicode-3.0", "MPL-2.0", "0BSD", "CC0-1.0"]
+allow = ["MIT", "Apache-2.0", "BSD-3-Clause", "GPL-3.0", "Unicode-3.0", "MPL-2.0", "0BSD", "BSL-1.0", "LGPL-2.1", "Unlicense", "Zlib"]
+exceptions = [
+    { allow = ["Apache-2.0 WITH LLVM-exception"], name = "linux-raw-sys" },
+    { allow = ["Apache-2.0 WITH LLVM-exception"], name = "rustix" },
+    { allow = ["Apache-2.0 WITH LLVM-exception"], name = "wasi" },
+    { allow = ["Apache-2.0 WITH LLVM-exception"], name = "wit-bindgen-rt" },
+]
 confidence-threshold = 0.8
-exceptions = []
 
 [sources]
 unknown-registry = "warn"
