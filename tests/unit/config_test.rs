@@ -1,17 +1,23 @@
 use claudeforge::config::{Config, Defaults, TemplateConfig};
 use std::path::PathBuf;
+use std::sync::Mutex;
 use tempfile::TempDir;
+
+// Mutex to prevent parallel execution of tests that modify environment variables
+static ENV_MUTEX: Mutex<()> = Mutex::new(());
 
 #[tokio::test]
 async fn test_config_load_creates_default_when_missing() {
+    let _guard = ENV_MUTEX.lock().unwrap();
+
     // Create a temporary directory for testing
     let temp_dir = TempDir::new().unwrap();
-    std::env::set_var("HOME", temp_dir.path());
-
-    // Mock the config directory
     let config_dir = temp_dir.path().join(".config");
     std::fs::create_dir_all(&config_dir).unwrap();
-    std::env::set_var("XDG_CONFIG_HOME", config_dir);
+
+    // Set environment variables within scope
+    std::env::set_var("HOME", temp_dir.path());
+    std::env::set_var("XDG_CONFIG_HOME", &config_dir);
 
     let config = Config::load().await;
 
@@ -20,16 +26,22 @@ async fn test_config_load_creates_default_when_missing() {
     let config = config.unwrap();
     assert!(config.templates.auto_update);
     assert_eq!(config.templates.update_interval_days, 7);
+
+    // Clean up environment variables
+    std::env::remove_var("XDG_CONFIG_HOME");
+    std::env::remove_var("HOME");
 }
 
 #[tokio::test]
 async fn test_config_save_and_load() {
+    let _guard = ENV_MUTEX.lock().unwrap();
+
     let temp_dir = TempDir::new().unwrap();
     let config_dir = temp_dir.path().join(".config");
     std::fs::create_dir_all(&config_dir).unwrap();
 
     // Set environment variables to use our temporary directory
-    std::env::set_var("XDG_CONFIG_HOME", config_dir);
+    std::env::set_var("XDG_CONFIG_HOME", &config_dir);
     std::env::set_var("HOME", temp_dir.path());
 
     let mut config = Config::default();
@@ -64,6 +76,10 @@ async fn test_config_save_and_load() {
     if let Some(cache_directory) = &loaded_config.templates.cache_directory {
         assert_eq!(cache_directory, &PathBuf::from("/tmp/cache"));
     }
+
+    // Clean up environment variables
+    std::env::remove_var("XDG_CONFIG_HOME");
+    std::env::remove_var("HOME");
 }
 
 #[test]

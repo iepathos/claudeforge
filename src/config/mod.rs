@@ -86,8 +86,11 @@ impl Config {
 
 /// Get the path to the configuration file
 fn get_config_path() -> Result<PathBuf> {
-    let config_dir =
-        dirs::config_dir().ok_or_else(|| anyhow::anyhow!("Failed to find config directory"))?;
+    let config_dir = if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
+        PathBuf::from(xdg_config_home)
+    } else {
+        dirs::config_dir().ok_or_else(|| anyhow::anyhow!("Failed to find config directory"))?
+    };
 
     Ok(config_dir.join("claudeforge").join("config.toml"))
 }
