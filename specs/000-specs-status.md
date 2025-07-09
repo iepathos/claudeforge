@@ -14,6 +14,7 @@ This document tracks the status of all specification documents in the project.
 | Spec | Feature | Status |
 |------|---------|--------|
 | 030 | Custom Template Support | ⬜ Planned |
+| 040 | Test Coverage Improvement | ⬜ Planned |
 
 ## Notes
 
