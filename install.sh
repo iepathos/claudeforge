@@ -56,7 +56,7 @@ fi
 echo "Latest version: $LATEST_VERSION"
 
 # Construct download URL
-DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${LATEST_VERSION}/${BINARY_NAME}-${LATEST_VERSION}-${TARGET}.tar.gz"
+DOWNLOAD_URL="https://github.com/$REPO/releases/download/${LATEST_VERSION}/${BINARY_NAME}-${TARGET}.tar.gz"
 
 # Create temporary directory
 TMP_DIR=$(mktemp -d)
