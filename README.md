@@ -10,10 +10,9 @@ A command-line tool that streamlines the creation of new projects optimized for 
 
 ### Installation
 
-#### Quick Install (Recommended)
+#### Quick Install Latest for macOS/Linux (Recommended)
 
 ```bash
-# macOS/Linux - Install latest release
 curl -fsSL https://raw.githubusercontent.com/iepathos/claudeforge/HEAD/install.sh | bash
 ```
 
