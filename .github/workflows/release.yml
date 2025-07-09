@@ -133,7 +133,8 @@ jobs:
       run: |
         mkdir release
         cp target/${{ matrix.target }}/release/${{ matrix.binary }} release/
-        cp README.md LICENSE release/
+        cp README.md release/
+        cp LICENSE release/
         cd release
         7z a ../claudeforge-${{ matrix.target }}.zip .
     
