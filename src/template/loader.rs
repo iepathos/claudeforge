@@ -8,6 +8,7 @@ use crate::cli::Language;
 use crate::error::ClaudeForgeError;
 use crate::git;
 use crate::template::{registry, Template};
+use crate::utils::fs as utils_fs;
 
 pub struct TemplateLoader {
     cache_dir: PathBuf,
@@ -59,7 +60,7 @@ impl TemplateLoader {
 
         // Remove existing directory if it exists
         if target_path.exists() {
-            fs::remove_dir_all(&target_path).await?;
+            utils_fs::remove_dir_all_robust(&target_path).await?;
         }
 
         // Clone the repository

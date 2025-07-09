@@ -2,6 +2,9 @@ use anyhow::{Context, Result};
 use std::path::Path;
 use tokio::fs;
 
+#[cfg(windows)]
+use tokio::time::{sleep, Duration};
+
 /// Recursively copy a directory, optionally excluding certain directories
 pub async fn copy_dir_recursive(src: &Path, dst: &Path, exclude: Option<&[&str]>) -> Result<()> {
     Box::pin(copy_dir_recursive_inner(src, dst, exclude)).await
@@ -48,6 +51,79 @@ async fn copy_dir_recursive_inner(src: &Path, dst: &Path, exclude: Option<&[&str
 pub async fn is_dir_empty(path: &Path) -> Result<bool> {
     let mut entries = fs::read_dir(path).await?;
     Ok(entries.next_entry().await?.is_none())
+}
+
+/// Robustly remove a directory, handling Windows permission issues
+pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
+    if !path.exists() {
+        return Ok(());
+    }
+
+    // On Windows, try to handle permission issues with retries
+    #[cfg(windows)]
+    {
+        const MAX_RETRIES: u32 = 5;
+        const RETRY_DELAY: Duration = Duration::from_millis(100);
+
+        // Try to remove read-only attributes before removal
+        if let Err(_) = remove_readonly_attributes(path).await {
+            // Ignore errors during attribute removal
+        }
+
+        let mut last_error = None;
+        for attempt in 0..MAX_RETRIES {
+            match fs::remove_dir_all(path).await {
+                Ok(()) => return Ok(()),
+                Err(e) => {
+                    last_error = Some(e);
+                    
+                    // Check if this is a Windows permission error
+                    if let Some(os_error) = last_error.as_ref().unwrap().raw_os_error() {
+                        if os_error == 5 { // ERROR_ACCESS_DENIED
+                            if attempt < MAX_RETRIES - 1 {
+                                // Wait a bit and retry with exponential backoff
+                                sleep(RETRY_DELAY * (attempt + 1)).await;
+                                continue;
+                            }
+                        }
+                    }
+                    
+                    // For other errors on Windows, retry anyway
+                    if attempt < MAX_RETRIES - 1 {
+                        sleep(RETRY_DELAY * (attempt + 1)).await;
+                    }
+                }
+            }
+        }
+
+        Err(anyhow::Error::from(last_error.unwrap()))
+            .with_context(|| format!("Failed to remove directory after {} attempts: {path:?}", MAX_RETRIES))
+    }
+
+    // On non-Windows platforms, just use the standard removal
+    #[cfg(not(windows))]
+    {
+        fs::remove_dir_all(path).await
+            .with_context(|| format!("Failed to remove directory: {path:?}"))
+    }
+}
+
+#[cfg(windows)]
+async fn remove_readonly_attributes(path: &Path) -> Result<()> {
+    use std::os::windows::fs::MetadataExt;
+    use std::process::Command;
+    
+    // Use attrib command to remove read-only attributes recursively
+    let output = tokio::task::spawn_blocking(move || {
+        Command::new("attrib")
+            .args(["-R", &format!("{}\\*", path.display()), "/S"])
+            .output()
+    }).await?;
+    
+    match output {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.into())
+    }
 }
 
 #[cfg(test)]
@@ -207,5 +283,41 @@ mod tests {
         // Verify both files exist
         assert!(dst_dir.join("file1.txt").exists());
         assert!(dst_dir.join("existing_file.txt").exists());
+    }
+
+    #[tokio::test]
+    async fn test_remove_dir_all_robust() {
+        let temp_dir = TempDir::new().unwrap();
+        let test_dir = temp_dir.path().join("test_remove");
+
+        // Create a directory with files
+        fs::create_dir_all(&test_dir).await.unwrap();
+        fs::write(test_dir.join("file1.txt"), "content1")
+            .await
+            .unwrap();
+        
+        let sub_dir = test_dir.join("subdir");
+        fs::create_dir_all(&sub_dir).await.unwrap();
+        fs::write(sub_dir.join("file2.txt"), "content2")
+            .await
+            .unwrap();
+
+        // Verify directory exists
+        assert!(test_dir.exists());
+
+        // Remove directory robustly
+        remove_dir_all_robust(&test_dir).await.unwrap();
+
+        // Verify directory is gone
+        assert!(!test_dir.exists());
+    }
+
+    #[tokio::test]
+    async fn test_remove_dir_all_robust_nonexistent() {
+        let temp_dir = TempDir::new().unwrap();
+        let nonexistent_dir = temp_dir.path().join("nonexistent");
+
+        // Should not error when removing nonexistent directory
+        remove_dir_all_robust(&nonexistent_dir).await.unwrap();
     }
 }
