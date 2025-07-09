@@ -147,8 +147,8 @@ jobs:
             sha256sum claudeforge-${{ matrix.target }}.tar.gz > claudeforge-${{ matrix.target }}.tar.gz.sha256
           fi
         else
-          if [[ "${{ runner.os }}" == "macOS" ]]; then
-            shasum -a 256 claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            powershell -Command "Get-FileHash -Algorithm SHA256 claudeforge-${{ matrix.target }}.zip | ForEach-Object { $_.Hash.ToLower() + '  ' + $_.Path.Split('\')[-1] }" > claudeforge-${{ matrix.target }}.zip.sha256
           else
             sha256sum claudeforge-${{ matrix.target }}.zip > claudeforge-${{ matrix.target }}.zip.sha256
           fi
