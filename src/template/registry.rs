@@ -81,7 +81,8 @@ pub fn load_template_registry() -> Result<HashMap<Language, Template>> {
             name: "python-claude-code".to_string(),
             language: Language::Python,
             repository: "https://github.com/iepathos/python-claude-code".to_string(),
-            description: "Comprehensive Python starter template with Claude Code guidelines".to_string(),
+            description: "Comprehensive Python starter template with Claude Code guidelines"
+                .to_string(),
             files_to_customize: vec![
                 FileCustomization {
                     path: "setup.py".to_string(),
