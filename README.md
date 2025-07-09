@@ -56,7 +56,7 @@ claudeforge new rust my-project --yes
 claudeforge new <LANGUAGE> <NAME> [OPTIONS]
 
 # Arguments:
-#   <LANGUAGE>  Language template to use (rust, go)
+#   <LANGUAGE>  Language template to use (rust, go, python)
 #   <NAME>      Project name
 
 # Options:
@@ -85,7 +85,7 @@ claudeforge version
 
 ## 🎯 Features
 
-- **Multi-language support**: Currently supports Rust and Go templates
+- **Multi-language support**: Currently supports Rust, Go, and Python templates
 - **AI-optimized templates**: Pre-configured with CLAUDE.md guidelines
 - **Git integration**: Automatically initializes clean git repositories
 - **Template customization**: Replaces project placeholders with your values
@@ -104,7 +104,8 @@ my-project/
 ├── .gitignore             # Language-specific gitignore
 ├── README.md              # Project documentation
 ├── Cargo.toml             # Rust: Project manifest
-└── go.mod                 # Go: Module definition
+├── go.mod                 # Go: Module definition
+└── pyproject.toml         # Python: Project configuration
 ```
 
 ## 🛠️ Development
@@ -172,24 +173,22 @@ Each generated project includes a comprehensive `CLAUDE.md` file that provides:
 - Testing patterns and examples
 - CLI framework integration
 
+**Python Templates:**
+- Modern Python project structure with pyproject.toml
+- Virtual environment and dependency management
+- Comprehensive testing with pytest
+- Type hints and mypy configuration
+- CLI framework integration with Click
+
 ## 📦 Template Registry
 
-ClaudeForge uses a registry system to manage templates:
+ClaudeForge uses a built-in registry system to manage templates. Currently, templates are defined in the source code with the following built-in templates:
 
-```toml
-# Built-in templates
-[[templates]]
-name = "rust-claude-code"
-language = "rust"
-repository = "https://github.com/iepathos/rust-claude-code"
-description = "Comprehensive Rust starter template with Claude Code guidelines"
+- **Rust**: Comprehensive Rust starter template with Claude Code guidelines
+- **Go**: Go project template optimized for Claude Code development  
+- **Python**: Python project template with Claude Code integration
 
-[[templates]]
-name = "go-claude-code"
-language = "go"
-repository = "https://github.com/iepathos/go-claude-code"
-description = "Go project template optimized for Claude Code development"
-```
+Templates are automatically cached locally and updated from their respective GitHub repositories.
 
 ## 🔧 Configuration
 
@@ -240,6 +239,18 @@ cd ~/work/projects/my-cli-tool
 go run main.go
 ```
 
+### Creating a Python Application
+
+```bash
+claudeforge new python my-python-app
+cd my-python-app
+
+# Set up virtual environment and start developing
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e .
+```
+
 ## 🔍 Troubleshooting
 
 ### Common Issues
@@ -282,9 +293,10 @@ We welcome contributions to ClaudeForge! Please see our contribution guidelines:
 To add support for a new language:
 
 1. Create a template repository with the language structure
-2. Add template configuration to `src/config/templates.toml`
-3. Test the template creation process
-4. Update documentation
+2. Add template configuration to `src/template/registry.rs`
+3. Update the `Language` enum in `src/cli.rs`
+4. Test the template creation process
+5. Update documentation
 
 ## 📝 License
 
