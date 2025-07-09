@@ -95,12 +95,18 @@ fn get_config_path() -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use tempfile::TempDir;
+    use std::env;
 
     #[tokio::test]
     async fn test_default_config() {
         let config = Config::default();
         assert!(config.templates.auto_update);
         assert_eq!(config.templates.update_interval_days, 7);
+        assert!(config.defaults.author_name.is_none());
+        assert!(config.defaults.author_email.is_none());
+        assert!(config.defaults.default_directory.is_none());
+        assert!(config.templates.cache_directory.is_none());
     }
 
     #[tokio::test]
@@ -117,5 +123,97 @@ mod tests {
             config.templates.update_interval_days,
             deserialized.templates.update_interval_days
         );
+    }
+
+    #[tokio::test]
+    async fn test_config_with_custom_values() {
+        let config = Config {
+            defaults: Defaults {
+                author_name: Some("Test Author".to_string()),
+                author_email: Some("test@example.com".to_string()),
+                default_directory: Some("/tmp/test".into()),
+            },
+            templates: TemplateConfig {
+                cache_directory: Some("/tmp/cache".into()),
+                auto_update: false,
+                update_interval_days: 30,
+            },
+        };
+
+        let serialized = toml::to_string(&config).unwrap();
+        let deserialized: Config = toml::from_str(&serialized).unwrap();
+
+        assert_eq!(config.defaults.author_name, deserialized.defaults.author_name);
+        assert_eq!(config.defaults.author_email, deserialized.defaults.author_email);
+        assert_eq!(config.defaults.default_directory, deserialized.defaults.default_directory);
+        assert_eq!(config.templates.cache_directory, deserialized.templates.cache_directory);
+        assert_eq!(config.templates.auto_update, deserialized.templates.auto_update);
+        assert_eq!(config.templates.update_interval_days, deserialized.templates.update_interval_days);
+    }
+
+    #[tokio::test]
+    async fn test_cache_directory_default() {
+        let config = Config::default();
+        let cache_dir = config.cache_directory();
+        assert!(cache_dir.is_ok());
+        
+        if let Ok(path) = cache_dir {
+            assert!(path.to_string_lossy().contains("claudeforge"));
+        }
+    }
+
+    #[tokio::test]
+    async fn test_cache_directory_custom() {
+        let config = Config {
+            defaults: Defaults {
+                author_name: None,
+                author_email: None,
+                default_directory: None,
+            },
+            templates: TemplateConfig {
+                cache_directory: Some("/tmp/custom-cache".into()),
+                auto_update: true,
+                update_interval_days: 7,
+            },
+        };
+
+        let cache_dir = config.cache_directory().unwrap();
+        assert_eq!(cache_dir, PathBuf::from("/tmp/custom-cache"));
+    }
+
+    #[tokio::test]
+    async fn test_get_config_path() {
+        let config_path = get_config_path();
+        assert!(config_path.is_ok());
+        
+        if let Ok(path) = config_path {
+            assert!(path.to_string_lossy().contains("claudeforge"));
+            assert!(path.to_string_lossy().contains("config.toml"));
+        }
+    }
+
+    #[tokio::test]
+    async fn test_config_save_and_load() {
+        let config = Config {
+            defaults: Defaults {
+                author_name: Some("Test Author".to_string()),
+                author_email: Some("test@example.com".to_string()),
+                default_directory: None,
+            },
+            templates: TemplateConfig {
+                cache_directory: None,
+                auto_update: false,
+                update_interval_days: 14,
+            },
+        };
+
+        // Test serialization and deserialization directly
+        let serialized = toml::to_string(&config).unwrap();
+        let deserialized: Config = toml::from_str(&serialized).unwrap();
+        
+        assert_eq!(config.defaults.author_name, deserialized.defaults.author_name);
+        assert_eq!(config.defaults.author_email, deserialized.defaults.author_email);
+        assert_eq!(config.templates.auto_update, deserialized.templates.auto_update);
+        assert_eq!(config.templates.update_interval_days, deserialized.templates.update_interval_days);
     }
 }

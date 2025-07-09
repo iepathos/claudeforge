@@ -120,4 +120,85 @@ mod tests {
         // Verify excluded directory was not copied
         assert!(!dst_dir.join(".git").exists());
     }
+
+    #[tokio::test]
+    async fn test_is_dir_empty_with_empty_directory() {
+        let temp_dir = TempDir::new().unwrap();
+        let empty_dir = temp_dir.path().join("empty");
+        fs::create_dir_all(&empty_dir).await.unwrap();
+
+        let result = is_dir_empty(&empty_dir).await.unwrap();
+        assert!(result);
+    }
+
+    #[tokio::test]
+    async fn test_is_dir_empty_with_non_empty_directory() {
+        let temp_dir = TempDir::new().unwrap();
+        let non_empty_dir = temp_dir.path().join("non_empty");
+        fs::create_dir_all(&non_empty_dir).await.unwrap();
+        fs::write(non_empty_dir.join("file.txt"), "content").await.unwrap();
+
+        let result = is_dir_empty(&non_empty_dir).await.unwrap();
+        assert!(!result);
+    }
+
+    #[tokio::test]
+    async fn test_is_dir_empty_with_nonexistent_directory() {
+        let temp_dir = TempDir::new().unwrap();
+        let nonexistent_dir = temp_dir.path().join("nonexistent");
+
+        let result = is_dir_empty(&nonexistent_dir).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_copy_dir_recursive_with_nested_directories() {
+        let temp_dir = TempDir::new().unwrap();
+        let src_dir = temp_dir.path().join("src");
+        let dst_dir = temp_dir.path().join("dst");
+
+        // Create nested directory structure
+        let nested_dir = src_dir.join("level1").join("level2");
+        fs::create_dir_all(&nested_dir).await.unwrap();
+        fs::write(nested_dir.join("deep_file.txt"), "deep content")
+            .await
+            .unwrap();
+
+        // Copy directory
+        copy_dir_recursive(&src_dir, &dst_dir, None).await.unwrap();
+
+        // Verify nested structure was copied
+        assert!(dst_dir.join("level1").join("level2").join("deep_file.txt").exists());
+        
+        let content = fs::read_to_string(dst_dir.join("level1").join("level2").join("deep_file.txt"))
+            .await
+            .unwrap();
+        assert_eq!(content, "deep content");
+    }
+
+    #[tokio::test]
+    async fn test_copy_dir_recursive_destination_exists() {
+        let temp_dir = TempDir::new().unwrap();
+        let src_dir = temp_dir.path().join("src");
+        let dst_dir = temp_dir.path().join("dst");
+
+        // Create source directory with files
+        fs::create_dir_all(&src_dir).await.unwrap();
+        fs::write(src_dir.join("file1.txt"), "content1")
+            .await
+            .unwrap();
+
+        // Create destination directory
+        fs::create_dir_all(&dst_dir).await.unwrap();
+        fs::write(dst_dir.join("existing_file.txt"), "existing")
+            .await
+            .unwrap();
+
+        // Copy directory to existing destination
+        copy_dir_recursive(&src_dir, &dst_dir, None).await.unwrap();
+
+        // Verify both files exist
+        assert!(dst_dir.join("file1.txt").exists());
+        assert!(dst_dir.join("existing_file.txt").exists());
+    }
 }

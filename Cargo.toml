@@ -41,9 +41,15 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [dev-dependencies]
-# Testing
+# Testing frameworks
 tempfile = "3"
 mockall = "0.13"
+proptest = "1.0"
+assert_cmd = "2.0"
+predicates = "3.0"
+
+# Benchmarking
+criterion = "0.5"
 
 [[bin]]
 name = "claudeforge"
