@@ -75,7 +75,8 @@ claudeforge list
 ```bash
 claudeforge update
 
-# Updates all templates to their latest versions
+# Updates only the templates you've previously used
+# Templates are cached locally when you first use them with 'claudeforge new'
 ```
 
 ### `version` - Show version information
@@ -89,7 +90,7 @@ claudeforge version
 - **AI-optimized templates**: Pre-configured with CLAUDE.md guidelines
 - **Git integration**: Automatically initializes clean git repositories
 - **Template customization**: Replaces project placeholders with your values
-- **Offline support**: Caches templates locally for faster project creation
+- **Smart caching**: Templates are cached on first use for faster subsequent project creation
 - **Cross-platform**: Works on macOS, Linux, and Windows
 
 ## 📁 Project Structure
@@ -188,7 +189,7 @@ ClaudeForge uses a built-in registry system to manage templates. Currently, temp
 - **Go**: Go project template optimized for Claude Code development  
 - **Python**: Python project template with Claude Code integration
 
-Templates are automatically cached locally and updated from their respective GitHub repositories.
+Templates are cached locally when first used with `claudeforge new` and can be updated from their respective GitHub repositories using `claudeforge update`.
 
 ## 🔧 Configuration
 
@@ -257,11 +258,14 @@ pip install -e .
 
 **Template not found:**
 ```bash
-# Update template cache
-claudeforge update
-
 # List available templates
 claudeforge list
+
+# Create a project to cache the template
+claudeforge new rust my-project
+
+# Update cached templates
+claudeforge update
 ```
 
 **Git not found:**
