@@ -76,10 +76,11 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
                 Ok(()) => return Ok(()),
                 Err(e) => {
                     last_error = Some(e);
-                    
+
                     // Check if this is a Windows permission error
                     if let Some(os_error) = last_error.as_ref().unwrap().raw_os_error() {
-                        if os_error == 5 { // ERROR_ACCESS_DENIED
+                        if os_error == 5 {
+                            // ERROR_ACCESS_DENIED
                             if attempt < MAX_RETRIES - 1 {
                                 // Wait a bit and retry with exponential backoff
                                 sleep(RETRY_DELAY * (attempt + 1)).await;
@@ -87,7 +88,7 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
                             }
                         }
                     }
-                    
+
                     // For other errors on Windows, retry anyway
                     if attempt < MAX_RETRIES - 1 {
                         sleep(RETRY_DELAY * (attempt + 1)).await;
@@ -96,14 +97,19 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
             }
         }
 
-        Err(anyhow::Error::from(last_error.unwrap()))
-            .with_context(|| format!("Failed to remove directory after {} attempts: {path:?}", MAX_RETRIES))
+        Err(anyhow::Error::from(last_error.unwrap())).with_context(|| {
+            format!(
+                "Failed to remove directory after {} attempts: {path:?}",
+                MAX_RETRIES
+            )
+        })
     }
 
     // On non-Windows platforms, just use the standard removal
     #[cfg(not(windows))]
     {
-        fs::remove_dir_all(path).await
+        fs::remove_dir_all(path)
+            .await
             .with_context(|| format!("Failed to remove directory: {path:?}"))
     }
 }
@@ -111,20 +117,21 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
 #[cfg(windows)]
 async fn remove_readonly_attributes(path: &Path) -> Result<()> {
     use std::process::Command;
-    
+
     // Convert path to owned string to avoid lifetime issues
     let path_str = format!("{}\\*", path.display());
-    
+
     // Use attrib command to remove read-only attributes recursively
     let output = tokio::task::spawn_blocking(move || {
         Command::new("attrib")
             .args(["-R", &path_str, "/S"])
             .output()
-    }).await?;
-    
+    })
+    .await?;
+
     match output {
         Ok(_) => Ok(()),
-        Err(e) => Err(e.into())
+        Err(e) => Err(e.into()),
     }
 }
 
@@ -297,7 +304,7 @@ mod tests {
         fs::write(test_dir.join("file1.txt"), "content1")
             .await
             .unwrap();
-        
+
         let sub_dir = test_dir.join("subdir");
         fs::create_dir_all(&sub_dir).await.unwrap();
         fs::write(sub_dir.join("file2.txt"), "content2")
