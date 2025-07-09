@@ -110,13 +110,15 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
 
 #[cfg(windows)]
 async fn remove_readonly_attributes(path: &Path) -> Result<()> {
-    use std::os::windows::fs::MetadataExt;
     use std::process::Command;
+    
+    // Convert path to owned string to avoid lifetime issues
+    let path_str = format!("{}\\*", path.display());
     
     // Use attrib command to remove read-only attributes recursively
     let output = tokio::task::spawn_blocking(move || {
         Command::new("attrib")
-            .args(["-R", &format!("{}\\*", path.display()), "/S"])
+            .args(["-R", &path_str, "/S"])
             .output()
     }).await?;
     
