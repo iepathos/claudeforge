@@ -15,8 +15,10 @@ A command-line tool that streamlines the creation of new projects optimized for 
 ```bash
 # macOS/Linux - Install latest release
 curl -fsSL https://raw.githubusercontent.com/iepathos/claudeforge/master/install.sh | bash
+```
 
-# Or download directly (replace VERSION and OS/ARCH as needed)
+Or download tarball directly from github releases (replace VERSION and OS/ARCH as needed)
+```bash
 # Example: claudeforge-0.1.6-x86_64-apple-darwin.tar.gz
 curl -LO https://github.com/iepathos/claudeforge/releases/latest/download/claudeforge-VERSION-OS-ARCH.tar.gz
 tar -xzf claudeforge-*.tar.gz
