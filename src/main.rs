@@ -130,16 +130,14 @@ mod tests {
     #[test]
     fn test_cli_update_command() {
         let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-        cmd.arg("update")
-            .assert()
-            .success();
+        cmd.arg("update").assert().success();
     }
 
     #[test]
     fn test_cli_new_command() {
         let temp_dir = TempDir::new().unwrap();
         let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-        
+
         cmd.arg("new")
             .arg("rust")
             .arg("test-project")
@@ -153,9 +151,7 @@ mod tests {
     #[test]
     fn test_cli_invalid_command() {
         let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-        cmd.arg("invalid-command")
-            .assert()
-            .failure();
+        cmd.arg("invalid-command").assert().failure();
     }
 
     #[test]
@@ -164,14 +160,14 @@ mod tests {
         cmd.arg("--help")
             .assert()
             .success()
-            .stdout(predicate::str::contains("Create new projects optimized for Claude Code"));
+            .stdout(predicate::str::contains(
+                "Create new projects optimized for Claude Code",
+            ));
     }
 
     #[test]
     fn test_cli_new_without_args() {
         let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-        cmd.arg("new")
-            .assert()
-            .failure();
+        cmd.arg("new").assert().failure();
     }
 }

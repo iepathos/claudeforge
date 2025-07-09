@@ -95,8 +95,8 @@ fn get_config_path() -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::TempDir;
     use std::env;
+    use tempfile::TempDir;
 
     #[tokio::test]
     async fn test_default_config() {
@@ -143,12 +143,30 @@ mod tests {
         let serialized = toml::to_string(&config).unwrap();
         let deserialized: Config = toml::from_str(&serialized).unwrap();
 
-        assert_eq!(config.defaults.author_name, deserialized.defaults.author_name);
-        assert_eq!(config.defaults.author_email, deserialized.defaults.author_email);
-        assert_eq!(config.defaults.default_directory, deserialized.defaults.default_directory);
-        assert_eq!(config.templates.cache_directory, deserialized.templates.cache_directory);
-        assert_eq!(config.templates.auto_update, deserialized.templates.auto_update);
-        assert_eq!(config.templates.update_interval_days, deserialized.templates.update_interval_days);
+        assert_eq!(
+            config.defaults.author_name,
+            deserialized.defaults.author_name
+        );
+        assert_eq!(
+            config.defaults.author_email,
+            deserialized.defaults.author_email
+        );
+        assert_eq!(
+            config.defaults.default_directory,
+            deserialized.defaults.default_directory
+        );
+        assert_eq!(
+            config.templates.cache_directory,
+            deserialized.templates.cache_directory
+        );
+        assert_eq!(
+            config.templates.auto_update,
+            deserialized.templates.auto_update
+        );
+        assert_eq!(
+            config.templates.update_interval_days,
+            deserialized.templates.update_interval_days
+        );
     }
 
     #[tokio::test]
@@ -156,7 +174,7 @@ mod tests {
         let config = Config::default();
         let cache_dir = config.cache_directory();
         assert!(cache_dir.is_ok());
-        
+
         if let Ok(path) = cache_dir {
             assert!(path.to_string_lossy().contains("claudeforge"));
         }
@@ -185,7 +203,7 @@ mod tests {
     async fn test_get_config_path() {
         let config_path = get_config_path();
         assert!(config_path.is_ok());
-        
+
         if let Ok(path) = config_path {
             assert!(path.to_string_lossy().contains("claudeforge"));
             assert!(path.to_string_lossy().contains("config.toml"));
@@ -210,10 +228,22 @@ mod tests {
         // Test serialization and deserialization directly
         let serialized = toml::to_string(&config).unwrap();
         let deserialized: Config = toml::from_str(&serialized).unwrap();
-        
-        assert_eq!(config.defaults.author_name, deserialized.defaults.author_name);
-        assert_eq!(config.defaults.author_email, deserialized.defaults.author_email);
-        assert_eq!(config.templates.auto_update, deserialized.templates.auto_update);
-        assert_eq!(config.templates.update_interval_days, deserialized.templates.update_interval_days);
+
+        assert_eq!(
+            config.defaults.author_name,
+            deserialized.defaults.author_name
+        );
+        assert_eq!(
+            config.defaults.author_email,
+            deserialized.defaults.author_email
+        );
+        assert_eq!(
+            config.templates.auto_update,
+            deserialized.templates.auto_update
+        );
+        assert_eq!(
+            config.templates.update_interval_days,
+            deserialized.templates.update_interval_days
+        );
     }
 }

@@ -9,7 +9,7 @@ fn test_version_command() {
 
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
-    
+
     // Should contain version information
     assert!(stdout.contains("claudeforge"));
     assert!(stdout.contains("Create new projects optimized for Claude Code"));
@@ -24,7 +24,7 @@ fn test_list_command() {
 
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
-    
+
     // Should list available templates
     assert!(stdout.contains("Available templates:"));
     assert!(stdout.contains("rust"));
@@ -42,10 +42,12 @@ fn test_update_command() {
     // Update command should succeed even with no cached templates
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
-    
+
     // Should show update message
-    assert!(stdout.contains("Checking for cached templates") || 
-            stdout.contains("No cached templates found"));
+    assert!(
+        stdout.contains("Checking for cached templates")
+            || stdout.contains("No cached templates found")
+    );
 }
 
 #[test]
@@ -80,7 +82,7 @@ fn test_git_not_available_simulation() {
         .args(&["run", "--", "version"])
         .output()
         .expect("Failed to execute command");
-    
+
     // If this succeeds, it means git check passed
     assert!(output.status.success());
 }

@@ -12,17 +12,17 @@ async fn test_template_loader_new() {
 #[tokio::test]
 async fn test_get_template_valid_language() {
     let loader = TemplateLoader::new().await.unwrap();
-    
+
     let rust_template = loader.get_template(Language::Rust);
     assert!(rust_template.is_ok());
     let template = rust_template.unwrap();
     assert_eq!(template.language, Language::Rust);
-    
+
     let go_template = loader.get_template(Language::Go);
     assert!(go_template.is_ok());
     let template = go_template.unwrap();
     assert_eq!(template.language, Language::Go);
-    
+
     let python_template = loader.get_template(Language::Python);
     assert!(python_template.is_ok());
     let template = python_template.unwrap();
@@ -33,10 +33,10 @@ async fn test_get_template_valid_language() {
 async fn test_list_templates() {
     let loader = TemplateLoader::new().await.unwrap();
     let templates = loader.list_templates();
-    
+
     // Should have at least the registered templates
     assert!(!templates.is_empty());
-    
+
     // Check that we have all expected languages
     let languages: Vec<Language> = templates.iter().map(|t| t.language.clone()).collect();
     assert!(languages.contains(&Language::Rust));
@@ -50,20 +50,22 @@ async fn test_get_or_fetch_with_cached_template() {
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("cache");
     fs::create_dir_all(&cache_dir).await.unwrap();
-    
+
     // Mock a cached template
     let rust_template_dir = cache_dir.join("rust-claude-template");
     fs::create_dir_all(&rust_template_dir).await.unwrap();
-    fs::write(rust_template_dir.join("Cargo.toml"), "[package]").await.unwrap();
-    
+    fs::write(rust_template_dir.join("Cargo.toml"), "[package]")
+        .await
+        .unwrap();
+
     // Set the cache directory environment variable
     std::env::set_var("XDG_CACHE_HOME", temp_dir.path());
-    
+
     let loader = TemplateLoader::new().await.unwrap();
-    
+
     // This should use the cached template without fetching
     let result = loader.get_or_fetch(Language::Rust).await;
-    
+
     // Note: This might fail if it tries to fetch from the actual repository
     // In a real test environment, we'd mock the git operations
     match result {
@@ -84,11 +86,11 @@ async fn test_update_all_with_no_cached_templates() {
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("claudeforge");
     fs::create_dir_all(&cache_dir).await.unwrap();
-    
+
     std::env::set_var("XDG_CACHE_HOME", temp_dir.path());
-    
+
     let loader = TemplateLoader::new().await.unwrap();
-    
+
     // Should complete without error even with no cached templates
     let result = loader.update_all().await;
     assert!(result.is_ok());
@@ -100,23 +102,27 @@ async fn test_update_all_with_cached_templates() {
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("claudeforge");
     fs::create_dir_all(&cache_dir).await.unwrap();
-    
+
     // Mock cached templates
     let rust_dir = cache_dir.join("rust-claude-template");
     fs::create_dir_all(&rust_dir).await.unwrap();
-    fs::write(rust_dir.join("Cargo.toml"), "[package]").await.unwrap();
-    
+    fs::write(rust_dir.join("Cargo.toml"), "[package]")
+        .await
+        .unwrap();
+
     let go_dir = cache_dir.join("go-claude-template");
     fs::create_dir_all(&go_dir).await.unwrap();
-    fs::write(go_dir.join("go.mod"), "module test").await.unwrap();
-    
+    fs::write(go_dir.join("go.mod"), "module test")
+        .await
+        .unwrap();
+
     std::env::set_var("XDG_CACHE_HOME", temp_dir.path());
-    
+
     let loader = TemplateLoader::new().await.unwrap();
-    
+
     // This will try to update the cached templates
     let result = loader.update_all().await;
-    
+
     // This might fail if it tries to fetch from actual repositories
     match result {
         Ok(_) => {

@@ -1,6 +1,6 @@
 use claudeforge::cli::Language;
-use claudeforge::template::processor::create_project;
 use claudeforge::error::ClaudeForgeError;
+use claudeforge::template::processor::create_project;
 use tempfile::TempDir;
 use tokio::fs;
 
@@ -9,19 +9,22 @@ async fn test_create_project_directory_exists_with_skip_prompts() {
     let temp_dir = TempDir::new().unwrap();
     let project_name = "existing-project";
     let project_dir = temp_dir.path().join(project_name);
-    
+
     // Create the directory first
     fs::create_dir_all(&project_dir).await.unwrap();
-    fs::write(project_dir.join("existing.txt"), "existing content").await.unwrap();
-    
+    fs::write(project_dir.join("existing.txt"), "existing content")
+        .await
+        .unwrap();
+
     // Try to create project with skip_prompts = true
     let result = create_project(
         Language::Rust,
         project_name.to_string(),
         Some(temp_dir.path().to_path_buf()),
         true, // skip_prompts
-    ).await;
-    
+    )
+    .await;
+
     // This might fail if template fetching fails, but the directory exists logic should work
     match result {
         Ok(_) => {
@@ -40,18 +43,19 @@ async fn test_create_project_directory_exists_without_skip_prompts() {
     let temp_dir = TempDir::new().unwrap();
     let project_name = "existing-project";
     let project_dir = temp_dir.path().join(project_name);
-    
+
     // Create the directory first
     fs::create_dir_all(&project_dir).await.unwrap();
-    
+
     // Try to create project with skip_prompts = false
     let result = create_project(
         Language::Rust,
         project_name.to_string(),
         Some(temp_dir.path().to_path_buf()),
         false, // skip_prompts
-    ).await;
-    
+    )
+    .await;
+
     // Should fail with DirectoryExists error
     match result {
         Err(e) => {
@@ -79,15 +83,16 @@ async fn test_create_project_with_custom_directory() {
     let temp_dir = TempDir::new().unwrap();
     let custom_dir = temp_dir.path().join("custom").join("path");
     let project_name = "custom-project";
-    
+
     // Create project in custom directory
     let result = create_project(
         Language::Go,
         project_name.to_string(),
         Some(custom_dir.clone()),
         true,
-    ).await;
-    
+    )
+    .await;
+
     match result {
         Ok(_) => {
             // Verify project was created in the custom directory
@@ -105,18 +110,19 @@ async fn test_create_project_with_custom_directory() {
 async fn test_create_project_default_directory() {
     let temp_dir = TempDir::new().unwrap();
     let project_name = "default-dir-project";
-    
+
     // Change to temp directory
     std::env::set_current_dir(&temp_dir).unwrap();
-    
+
     // Create project without specifying directory (should use current dir)
     let result = create_project(
         Language::Python,
         project_name.to_string(),
         None, // Use default directory
         true,
-    ).await;
-    
+    )
+    .await;
+
     match result {
         Ok(_) => {
             // Verify project was created in current directory
@@ -134,14 +140,15 @@ async fn test_create_project_default_directory() {
 async fn test_create_project_with_special_characters_in_name() {
     let temp_dir = TempDir::new().unwrap();
     let project_name = "my-special_project.2024";
-    
+
     let result = create_project(
         Language::Rust,
         project_name.to_string(),
         Some(temp_dir.path().to_path_buf()),
         true,
-    ).await;
-    
+    )
+    .await;
+
     match result {
         Ok(_) => {
             let project_path = temp_dir.path().join(project_name);

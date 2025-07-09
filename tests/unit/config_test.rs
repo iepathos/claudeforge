@@ -7,14 +7,14 @@ async fn test_config_load_creates_default_when_missing() {
     // Create a temporary directory for testing
     let temp_dir = TempDir::new().unwrap();
     std::env::set_var("HOME", temp_dir.path());
-    
+
     // Mock the config directory
     let config_dir = temp_dir.path().join(".config");
     std::fs::create_dir_all(&config_dir).unwrap();
     std::env::set_var("XDG_CONFIG_HOME", config_dir);
 
     let config = Config::load().await;
-    
+
     // Should create default config when file doesn't exist
     assert!(config.is_ok());
     let config = config.unwrap();
@@ -27,7 +27,7 @@ async fn test_config_save_and_load() {
     let temp_dir = TempDir::new().unwrap();
     let config_dir = temp_dir.path().join(".config");
     std::fs::create_dir_all(&config_dir).unwrap();
-    
+
     // Set environment variables to use our temporary directory
     std::env::set_var("XDG_CONFIG_HOME", config_dir);
     std::env::set_var("HOME", temp_dir.path());
@@ -49,7 +49,7 @@ async fn test_config_save_and_load() {
     // Check that the loaded config has the saved values
     assert_eq!(loaded_config.templates.auto_update, false);
     assert_eq!(loaded_config.templates.update_interval_days, 14);
-    
+
     // Note: The config file might be created with empty values or might not load correctly
     // Let's check if the config was actually saved properly
     if let Some(author_name) = &loaded_config.defaults.author_name {
@@ -88,7 +88,7 @@ fn test_config_cache_directory_custom() {
 #[test]
 fn test_config_cache_directory_default() {
     let config = Config::default();
-    
+
     // This will use the system's cache directory
     let cache_dir = config.cache_directory();
     assert!(cache_dir.is_ok());

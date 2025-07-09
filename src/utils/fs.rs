@@ -136,7 +136,9 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let non_empty_dir = temp_dir.path().join("non_empty");
         fs::create_dir_all(&non_empty_dir).await.unwrap();
-        fs::write(non_empty_dir.join("file.txt"), "content").await.unwrap();
+        fs::write(non_empty_dir.join("file.txt"), "content")
+            .await
+            .unwrap();
 
         let result = is_dir_empty(&non_empty_dir).await.unwrap();
         assert!(!result);
@@ -168,11 +170,16 @@ mod tests {
         copy_dir_recursive(&src_dir, &dst_dir, None).await.unwrap();
 
         // Verify nested structure was copied
-        assert!(dst_dir.join("level1").join("level2").join("deep_file.txt").exists());
-        
-        let content = fs::read_to_string(dst_dir.join("level1").join("level2").join("deep_file.txt"))
-            .await
-            .unwrap();
+        assert!(dst_dir
+            .join("level1")
+            .join("level2")
+            .join("deep_file.txt")
+            .exists());
+
+        let content =
+            fs::read_to_string(dst_dir.join("level1").join("level2").join("deep_file.txt"))
+                .await
+                .unwrap();
         assert_eq!(content, "deep content");
     }
 

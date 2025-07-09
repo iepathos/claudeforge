@@ -210,17 +210,18 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let project_name = "test-project";
         let project_path = temp_dir.path().join(project_name);
-        
+
         // Create the directory first
         fs::create_dir(&project_path).await.unwrap();
-        
+
         let result = create_project(
             Language::Rust,
             project_name.to_string(),
             Some(temp_dir.path().to_path_buf()),
             false,
-        ).await;
-        
+        )
+        .await;
+
         assert!(result.is_err());
     }
 
@@ -229,17 +230,18 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let project_name = "test-project";
         let project_path = temp_dir.path().join(project_name);
-        
+
         // Create the directory first
         fs::create_dir(&project_path).await.unwrap();
-        
+
         let result = create_project(
             Language::Rust,
             project_name.to_string(),
             Some(temp_dir.path().to_path_buf()),
             true,
-        ).await;
-        
+        )
+        .await;
+
         // This might fail due to git or template issues, but shouldn't fail due to directory existing
         assert!(result.is_ok() || result.is_err());
     }
@@ -248,14 +250,15 @@ mod tests {
     async fn test_create_project_custom_directory() {
         let temp_dir = TempDir::new().unwrap();
         let project_name = "test-project";
-        
+
         let result = create_project(
             Language::Rust,
             project_name.to_string(),
             Some(temp_dir.path().to_path_buf()),
             true,
-        ).await;
-        
+        )
+        .await;
+
         // This might fail due to git or template issues, but test the path logic
         assert!(result.is_ok() || result.is_err());
     }
@@ -265,14 +268,16 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let template_dir = temp_dir.path().join("template");
         let target_dir = temp_dir.path().join("target");
-        
+
         // Create template directory with some files
         fs::create_dir_all(&template_dir).await.unwrap();
-        fs::write(template_dir.join("test.txt"), "test content").await.unwrap();
-        
+        fs::write(template_dir.join("test.txt"), "test content")
+            .await
+            .unwrap();
+
         let result = copy_template(&template_dir, &target_dir).await;
         assert!(result.is_ok());
-        
+
         // Check that files were copied
         assert!(target_dir.join("test.txt").exists());
     }
@@ -319,7 +324,7 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let project_dir = temp_dir.path().join("test-project");
         fs::create_dir_all(&project_dir).await.unwrap();
-        
+
         let result = initialize_git_repo(&project_dir).await;
         // This might fail if git is not available, but test that it doesn't panic
         assert!(result.is_ok() || result.is_err());

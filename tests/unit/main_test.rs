@@ -1,5 +1,5 @@
-use claudeforge::{Cli, Commands};
 use clap::Parser;
+use claudeforge::{Cli, Commands};
 
 #[test]
 fn test_cli_parsing_new_command() {
