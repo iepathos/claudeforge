@@ -74,6 +74,58 @@ pub fn load_template_registry() -> Result<HashMap<Language, Template>> {
         },
     );
 
+    // Python template
+    templates.insert(
+        Language::Python,
+        Template {
+            name: "python-claude-code".to_string(),
+            language: Language::Python,
+            repository: "https://github.com/iepathos/python-claude-code".to_string(),
+            description: "Comprehensive Python starter template with Claude Code guidelines".to_string(),
+            files_to_customize: vec![
+                FileCustomization {
+                    path: "setup.py".to_string(),
+                    replacements: vec![
+                        Replacement {
+                            placeholder: "my-project".to_string(),
+                            value_type: ValueType::ProjectName,
+                        },
+                        Replacement {
+                            placeholder: "yourusername".to_string(),
+                            value_type: ValueType::AuthorName,
+                        },
+                    ],
+                },
+                FileCustomization {
+                    path: "pyproject.toml".to_string(),
+                    replacements: vec![
+                        Replacement {
+                            placeholder: "my-project".to_string(),
+                            value_type: ValueType::ProjectName,
+                        },
+                        Replacement {
+                            placeholder: "yourusername".to_string(),
+                            value_type: ValueType::AuthorName,
+                        },
+                    ],
+                },
+                FileCustomization {
+                    path: "README.md".to_string(),
+                    replacements: vec![
+                        Replacement {
+                            placeholder: "yourusername".to_string(),
+                            value_type: ValueType::AuthorName,
+                        },
+                        Replacement {
+                            placeholder: "my-python-project".to_string(),
+                            value_type: ValueType::ProjectName,
+                        },
+                    ],
+                },
+            ],
+        },
+    );
+
     Ok(templates)
 }
 

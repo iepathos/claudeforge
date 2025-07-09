@@ -47,6 +47,8 @@ pub enum Language {
     Rust,
     #[serde(rename = "go")]
     Go,
+    #[serde(rename = "python")]
+    Python,
 }
 
 impl std::fmt::Display for Language {
@@ -54,6 +56,7 @@ impl std::fmt::Display for Language {
         match self {
             Language::Rust => write!(f, "rust"),
             Language::Go => write!(f, "go"),
+            Language::Python => write!(f, "python"),
         }
     }
 }
