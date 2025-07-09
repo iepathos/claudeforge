@@ -1,6 +1,6 @@
 [package]
 name = "claudeforge"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 authors = ["Glen Baker <iepathos@gmail.com>"]
 description = "Create new projects optimized for Claude Code"
