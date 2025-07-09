@@ -288,7 +288,7 @@ To add support for a new language:
 
 ## 📝 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+GPL-3.0 License - see [LICENSE](LICENSE) file for details.
 
 ## 🎯 Roadmap
 
