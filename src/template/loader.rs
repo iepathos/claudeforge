@@ -70,18 +70,24 @@ impl TemplateLoader {
     }
 
     pub async fn update_all(&self) -> Result<()> {
-        info!("Updating all cached templates...");
+        info!("Checking for cached templates to update...");
 
+        let mut updated_count = 0;
         for template in self.templates.values() {
             let template_path = self.cache_dir.join(&template.name);
 
             if template_path.exists() {
                 info!("Updating template: {}", template.name);
                 self.fetch_template(template).await?;
+                updated_count += 1;
             }
         }
 
-        info!("All templates updated successfully");
+        if updated_count == 0 {
+            info!("No cached templates found. Use 'claudeforge new' to create a project first.");
+        } else {
+            info!("Successfully updated {} cached template(s)", updated_count);
+        }
         Ok(())
     }
 

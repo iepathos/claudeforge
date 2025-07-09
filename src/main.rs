@@ -67,12 +67,8 @@ async fn list_templates() -> Result<()> {
 }
 
 async fn update_templates() -> Result<()> {
-    println!("Updating cached templates...");
-
     let loader = TemplateLoader::new().await?;
     loader.update_all().await?;
-
-    println!("✅ All templates updated successfully!");
     Ok(())
 }
 
