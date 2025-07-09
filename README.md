@@ -11,7 +11,7 @@ A command-line tool that streamlines the creation of new projects optimized for 
 ### Installation
 
 ```bash
-# Install from crates.io (when published)
+# Install from crates.io
 cargo install claudeforge
 
 # Or build from source
