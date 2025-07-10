@@ -100,8 +100,9 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
             }
         }
 
-        Err(anyhow::Error::from(last_error.unwrap()))
-            .with_context(|| format!("Failed to remove directory after {MAX_RETRIES} attempts: {path:?}"))
+        Err(anyhow::Error::from(last_error.unwrap())).with_context(|| {
+            format!("Failed to remove directory after {MAX_RETRIES} attempts: {path:?}")
+        })
     }
 
     // On non-Windows platforms, just use the standard removal
