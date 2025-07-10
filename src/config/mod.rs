@@ -6,11 +6,12 @@ use tokio::fs;
 /// User configuration structure
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
+    #[serde(default)]
     pub defaults: Defaults,
     pub templates: TemplateConfig,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Defaults {
     pub author_name: Option<String>,
     pub author_email: Option<String>,

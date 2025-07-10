@@ -4,3 +4,4 @@ pub mod git_test;
 pub mod loader_test;
 pub mod main_test;
 pub mod processor_test;
+pub mod toml_test;
