@@ -69,7 +69,7 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
         const RETRY_DELAY: Duration = Duration::from_millis(100);
 
         // Try to remove read-only attributes before removal
-        if let Err(_) = remove_readonly_attributes(path).await {
+        if remove_readonly_attributes(path).await.is_err() {
             // Ignore errors during attribute removal
         }
 
@@ -100,12 +100,8 @@ pub async fn remove_dir_all_robust(path: &Path) -> Result<()> {
             }
         }
 
-        Err(anyhow::Error::from(last_error.unwrap())).with_context(|| {
-            format!(
-                "Failed to remove directory after {} attempts: {path:?}",
-                MAX_RETRIES
-            )
-        })
+        Err(anyhow::Error::from(last_error.unwrap()))
+            .with_context(|| format!("Failed to remove directory after {MAX_RETRIES} attempts: {path:?}"))
     }
 
     // On non-Windows platforms, just use the standard removal
