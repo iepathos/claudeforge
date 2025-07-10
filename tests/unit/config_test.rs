@@ -17,7 +17,7 @@ async fn test_config_load_creates_default_when_missing() {
     // Create a unique temporary directory for testing
     let test_id = TEST_COUNTER.fetch_add(1, Ordering::SeqCst);
     let temp_dir = TempDir::new().unwrap();
-    let config_dir = temp_dir.path().join(format!(".config-{}", test_id));
+    let config_dir = temp_dir.path().join(format!(".config-{test_id}"));
     std::fs::create_dir_all(&config_dir).unwrap();
 
     // Set environment variables within scope  
@@ -46,7 +46,7 @@ async fn test_config_save_and_load() {
     // Create a unique temporary directory for testing
     let test_id = TEST_COUNTER.fetch_add(1, Ordering::SeqCst);
     let temp_dir = TempDir::new().unwrap();
-    let config_dir = temp_dir.path().join(format!(".config-{}", test_id));
+    let config_dir = temp_dir.path().join(format!(".config-{test_id}"));
     std::fs::create_dir_all(&config_dir).unwrap();
 
     // Set environment variables to use our temporary directory
