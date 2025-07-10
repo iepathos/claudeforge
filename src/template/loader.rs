@@ -209,22 +209,52 @@ mod tests {
     async fn test_update_all_no_cached_templates() {
         let temp_dir = TempDir::new().unwrap();
         let original_home = env::var("HOME").ok();
+        let original_xdg_cache = env::var("XDG_CACHE_HOME").ok();
 
-        // Set a temporary HOME directory for testing
+        // Set a temporary HOME directory for testing  
         env::set_var("HOME", temp_dir.path());
+        // Also set XDG_CACHE_HOME to ensure we're using our temp directory
+        let cache_path = temp_dir.path().join("cache");
+        env::set_var("XDG_CACHE_HOME", &cache_path);
 
         let loader = TemplateLoader::new().await;
 
-        // Restore original HOME
+        // Restore original environment variables
         if let Some(home) = original_home {
             env::set_var("HOME", home);
         } else {
             env::remove_var("HOME");
         }
+        if let Some(xdg_cache) = original_xdg_cache {
+            env::set_var("XDG_CACHE_HOME", xdg_cache);
+        } else {
+            env::remove_var("XDG_CACHE_HOME");
+        }
 
-        if let Ok(loader) = loader {
-            let result = loader.update_all().await;
-            assert!(result.is_ok());
+        match loader {
+            Ok(loader) => {
+                // Verify the cache directory is empty (no cached templates)
+                let cache_entries: Vec<_> = std::fs::read_dir(&loader.cache_dir)
+                    .map(|entries| entries.collect::<Result<Vec<_>, _>>())
+                    .unwrap_or_else(|_| Ok(vec![]))
+                    .unwrap_or_default();
+                
+                println!("Cache directory: {:?}", loader.cache_dir);
+                println!("Cache entries: {:?}", cache_entries.len());
+                
+                let result = loader.update_all().await;
+                if let Err(ref e) = result {
+                    eprintln!("update_all() failed with error: {}", e);
+                }
+                assert!(result.is_ok(), "update_all() failed: {:?}", result);
+            }
+            Err(e) => {
+                // If loader creation fails, we can't test update_all, but we should not panic
+                eprintln!("TemplateLoader::new() failed: {}", e);
+                // In CI environments, this might be expected if dirs can't find cache directory
+                // The test should pass if loader creation fails due to environment issues
+                println!("Skipping test due to TemplateLoader creation failure: {}", e);
+            }
         }
     }
 

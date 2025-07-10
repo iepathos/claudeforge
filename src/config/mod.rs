@@ -76,8 +76,15 @@ impl Config {
             let cache_dir = if let Ok(xdg_cache_home) = std::env::var("XDG_CACHE_HOME") {
                 PathBuf::from(xdg_cache_home)
             } else {
-                dirs::cache_dir()
-                    .ok_or_else(|| anyhow::anyhow!("Failed to find cache directory"))?
+                dirs::cache_dir().ok_or_else(|| {
+                    anyhow::anyhow!(
+                        "Failed to find cache directory. XDG_CACHE_HOME not set and dirs::cache_dir() returned None. \
+                         Environment: HOME={:?}, USER={:?}, TMPDIR={:?}",
+                        std::env::var("HOME"),
+                        std::env::var("USER"),
+                        std::env::var("TMPDIR")
+                    )
+                })?
             };
             Ok(cache_dir.join("claudeforge"))
         }
