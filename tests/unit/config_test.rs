@@ -1,22 +1,26 @@
 use claudeforge::config::{Config, Defaults, TemplateConfig};
 use std::path::PathBuf;
-use std::sync::Mutex;
 use tempfile::TempDir;
+use tokio::sync::Mutex;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 // Mutex to prevent parallel execution of tests that modify environment variables
-static ENV_MUTEX: Mutex<()> = Mutex::new(());
+static ENV_MUTEX: Mutex<()> = Mutex::const_new(());
+// Counter to ensure unique test environments
+static TEST_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[tokio::test]
 async fn test_config_load_creates_default_when_missing() {
     // Keep the guard for the entire test to ensure proper isolation
-    let _guard = ENV_MUTEX.lock().unwrap();
+    let _guard = ENV_MUTEX.lock().await;
 
-    // Create a temporary directory for testing
+    // Create a unique temporary directory for testing
+    let test_id = TEST_COUNTER.fetch_add(1, Ordering::SeqCst);
     let temp_dir = TempDir::new().unwrap();
-    let config_dir = temp_dir.path().join(".config");
+    let config_dir = temp_dir.path().join(format!(".config-{}", test_id));
     std::fs::create_dir_all(&config_dir).unwrap();
 
-    // Set environment variables within scope
+    // Set environment variables within scope  
     std::env::set_var("HOME", temp_dir.path());
     std::env::set_var("XDG_CONFIG_HOME", &config_dir);
 
@@ -37,10 +41,12 @@ async fn test_config_load_creates_default_when_missing() {
 #[allow(clippy::bool_assert_comparison)]
 async fn test_config_save_and_load() {
     // Keep the guard for the entire test to ensure proper isolation
-    let _guard = ENV_MUTEX.lock().unwrap();
+    let _guard = ENV_MUTEX.lock().await;
 
+    // Create a unique temporary directory for testing
+    let test_id = TEST_COUNTER.fetch_add(1, Ordering::SeqCst);
     let temp_dir = TempDir::new().unwrap();
-    let config_dir = temp_dir.path().join(".config");
+    let config_dir = temp_dir.path().join(format!(".config-{}", test_id));
     std::fs::create_dir_all(&config_dir).unwrap();
 
     // Set environment variables to use our temporary directory
