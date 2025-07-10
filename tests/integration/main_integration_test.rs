@@ -3,7 +3,7 @@ use std::process::Command;
 #[test]
 fn test_version_command() {
     let output = Command::new("cargo")
-        .args(&["run", "--", "version"])
+        .args(["run", "--", "version"])
         .output()
         .expect("Failed to execute command");
 
@@ -18,7 +18,7 @@ fn test_version_command() {
 #[test]
 fn test_list_command() {
     let output = Command::new("cargo")
-        .args(&["run", "--", "list"])
+        .args(["run", "--", "list"])
         .output()
         .expect("Failed to execute command");
 
@@ -35,7 +35,7 @@ fn test_list_command() {
 #[test]
 fn test_update_command() {
     let output = Command::new("cargo")
-        .args(&["run", "--", "update"])
+        .args(["run", "--", "update"])
         .output()
         .expect("Failed to execute command");
 
@@ -53,7 +53,7 @@ fn test_update_command() {
 #[test]
 fn test_new_command_missing_args() {
     let output = Command::new("cargo")
-        .args(&["run", "--", "new"])
+        .args(["run", "--", "new"])
         .output()
         .expect("Failed to execute command");
 
@@ -66,7 +66,7 @@ fn test_new_command_missing_args() {
 #[test]
 fn test_new_command_invalid_language() {
     let output = Command::new("cargo")
-        .args(&["run", "--", "new", "invalid-lang", "test-project"])
+        .args(["run", "--", "new", "invalid-lang", "test-project"])
         .output()
         .expect("Failed to execute command");
 
@@ -79,7 +79,7 @@ fn test_git_not_available_simulation() {
     // This test would require mocking git availability
     // For now, we just verify that git is checked
     let output = Command::new("cargo")
-        .args(&["run", "--", "version"])
+        .args(["run", "--", "version"])
         .output()
         .expect("Failed to execute command");
 

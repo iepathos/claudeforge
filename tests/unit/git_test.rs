@@ -63,7 +63,7 @@ fn test_add_all_and_commit_empty_repo() {
     // This might fail because there's nothing to commit
     match result {
         Ok(_) => println!("Empty commit succeeded"),
-        Err(e) => println!("Expected error for empty commit: {}", e),
+        Err(e) => println!("Expected error for empty commit: {e}"),
     }
 }
 

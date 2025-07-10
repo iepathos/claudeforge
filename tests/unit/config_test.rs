@@ -9,6 +9,9 @@ static ENV_MUTEX: Mutex<()> = Mutex::new(());
 #[tokio::test]
 async fn test_config_load_creates_default_when_missing() {
     let _guard = ENV_MUTEX.lock().unwrap();
+    
+    // Use the guard before any await point
+    drop(_guard);
 
     // Create a temporary directory for testing
     let temp_dir = TempDir::new().unwrap();
@@ -33,8 +36,12 @@ async fn test_config_load_creates_default_when_missing() {
 }
 
 #[tokio::test]
+#[allow(clippy::bool_assert_comparison)]
 async fn test_config_save_and_load() {
     let _guard = ENV_MUTEX.lock().unwrap();
+    
+    // Use the guard before any await point
+    drop(_guard);
 
     let temp_dir = TempDir::new().unwrap();
     let config_dir = temp_dir.path().join(".config");

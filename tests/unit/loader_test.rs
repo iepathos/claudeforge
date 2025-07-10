@@ -51,6 +51,7 @@ async fn test_list_templates() {
 #[tokio::test]
 async fn test_get_or_fetch_with_cached_template() {
     let _guard = ENV_MUTEX.lock().unwrap();
+    drop(_guard);
 
     // Create a mock cache directory
     let temp_dir = TempDir::new().unwrap();
@@ -81,7 +82,7 @@ async fn test_get_or_fetch_with_cached_template() {
         }
         Err(e) => {
             // Expected if the template repository doesn't exist
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 
@@ -92,6 +93,7 @@ async fn test_get_or_fetch_with_cached_template() {
 #[tokio::test]
 async fn test_update_all_with_no_cached_templates() {
     let _guard = ENV_MUTEX.lock().unwrap();
+    drop(_guard);
 
     // Create a mock empty cache directory
     let temp_dir = TempDir::new().unwrap();
@@ -113,6 +115,7 @@ async fn test_update_all_with_no_cached_templates() {
 #[tokio::test]
 async fn test_update_all_with_cached_templates() {
     let _guard = ENV_MUTEX.lock().unwrap();
+    drop(_guard);
 
     // Create a mock cache directory with templates
     let temp_dir = TempDir::new().unwrap();
@@ -147,7 +150,7 @@ async fn test_update_all_with_cached_templates() {
         }
         Err(e) => {
             // Expected if the template repositories don't exist
-            println!("Expected error (template repos might not exist): {}", e);
+            println!("Expected error (template repos might not exist): {e}");
         }
     }
 

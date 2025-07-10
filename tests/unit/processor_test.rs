@@ -33,7 +33,7 @@ async fn test_create_project_directory_exists_with_skip_prompts() {
         }
         Err(e) => {
             // Could fail due to template fetching issues
-            println!("Expected error (might be template fetch issue): {}", e);
+            println!("Expected error (might be template fetch issue): {e}");
         }
     }
 }
@@ -67,7 +67,7 @@ async fn test_create_project_directory_exists_without_skip_prompts() {
                     }
                     _ => {
                         // Could be a different error (e.g., template fetch failed)
-                        println!("Different error than expected: {}", cf_error);
+                        println!("Different error than expected: {cf_error}");
                     }
                 }
             }
@@ -101,7 +101,7 @@ async fn test_create_project_with_custom_directory() {
         }
         Err(e) => {
             // Expected if template repository doesn't exist
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 }
@@ -131,7 +131,7 @@ async fn test_create_project_default_directory() {
         }
         Err(e) => {
             // Expected if template repository doesn't exist
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 }
@@ -155,7 +155,7 @@ async fn test_create_project_with_special_characters_in_name() {
             assert!(project_path.exists());
         }
         Err(e) => {
-            println!("Expected error (template repo might not exist): {}", e);
+            println!("Expected error (template repo might not exist): {e}");
         }
     }
 }
