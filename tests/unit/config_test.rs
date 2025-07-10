@@ -8,6 +8,7 @@ static ENV_MUTEX: Mutex<()> = Mutex::new(());
 
 #[tokio::test]
 async fn test_config_load_creates_default_when_missing() {
+    // Keep the guard for the entire test to ensure proper isolation
     let _guard = ENV_MUTEX.lock().unwrap();
 
     // Create a temporary directory for testing
@@ -18,9 +19,6 @@ async fn test_config_load_creates_default_when_missing() {
     // Set environment variables within scope
     std::env::set_var("HOME", temp_dir.path());
     std::env::set_var("XDG_CONFIG_HOME", &config_dir);
-
-    // Drop the guard before await to avoid holding lock across await point
-    drop(_guard);
 
     let config = Config::load().await;
 
@@ -38,6 +36,7 @@ async fn test_config_load_creates_default_when_missing() {
 #[tokio::test]
 #[allow(clippy::bool_assert_comparison)]
 async fn test_config_save_and_load() {
+    // Keep the guard for the entire test to ensure proper isolation
     let _guard = ENV_MUTEX.lock().unwrap();
 
     let temp_dir = TempDir::new().unwrap();
@@ -55,9 +54,6 @@ async fn test_config_save_and_load() {
     config.templates.cache_directory = Some(PathBuf::from("/tmp/cache"));
     config.templates.auto_update = false;
     config.templates.update_interval_days = 14;
-
-    // Drop the guard before await to avoid holding lock across await point
-    drop(_guard);
 
     // Save the config
     config.save().await.unwrap();
