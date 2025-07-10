@@ -40,9 +40,9 @@ async fn copy_dir_recursive_inner(src: &Path, dst: &Path, exclude: Option<&[&str
         } else {
             // Check if source file exists before copying
             if entry_path.exists() {
-                fs::copy(&entry_path, &dst_path)
-                    .await
-                    .with_context(|| format!("Failed to copy file: {entry_path:?} to {dst_path:?}"))?;
+                fs::copy(&entry_path, &dst_path).await.with_context(|| {
+                    format!("Failed to copy file: {entry_path:?} to {dst_path:?}")
+                })?;
             }
         }
     }

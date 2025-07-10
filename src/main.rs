@@ -132,7 +132,7 @@ mod tests {
         // Use a temporary directory for cache to ensure clean state
         let temp_dir = TempDir::new().unwrap();
         let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-        
+
         // Set XDG_CACHE_HOME to temporary directory to isolate the test
         cmd.env("XDG_CACHE_HOME", temp_dir.path())
             .arg("update")

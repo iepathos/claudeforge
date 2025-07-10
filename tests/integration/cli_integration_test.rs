@@ -9,7 +9,9 @@ fn test_cli_version_output() {
         .assert()
         .success()
         .stdout(predicate::str::contains("claudeforge"))
-        .stdout(predicate::str::contains("Create new projects optimized for Claude Code"))
+        .stdout(predicate::str::contains(
+            "Create new projects optimized for Claude Code",
+        ))
         .stdout(predicate::str::contains("Repository:"))
         .stdout(predicate::str::contains("Authors:"));
 }
@@ -20,7 +22,9 @@ fn test_cli_help_output() {
     cmd.arg("--help")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Create new projects optimized for Claude Code"))
+        .stdout(predicate::str::contains(
+            "Create new projects optimized for Claude Code",
+        ))
         .stdout(predicate::str::contains("Usage:"))
         .stdout(predicate::str::contains("Commands:"));
 }
@@ -39,7 +43,7 @@ fn test_cli_update_command() {
     // Use a temporary directory for cache to ensure clean state
     let temp_dir = TempDir::new().unwrap();
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-    
+
     // Set XDG_CACHE_HOME to temporary directory to isolate the test
     cmd.env("XDG_CACHE_HOME", temp_dir.path())
         .arg("update")
@@ -60,7 +64,7 @@ fn test_cli_new_without_arguments() {
 fn test_cli_new_with_invalid_template() {
     let temp_dir = TempDir::new().unwrap();
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-    
+
     cmd.arg("new")
         .arg("invalid-template")
         .arg("test-project")
@@ -75,7 +79,7 @@ fn test_cli_new_with_invalid_template() {
 fn test_cli_new_rust_project() {
     let temp_dir = TempDir::new().unwrap();
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-    
+
     cmd.arg("new")
         .arg("rust")
         .arg("test-rust-project")
@@ -84,7 +88,9 @@ fn test_cli_new_rust_project() {
         .arg("--yes")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Project 'test-rust-project' created successfully"));
+        .stdout(predicate::str::contains(
+            "Project 'test-rust-project' created successfully",
+        ));
 }
 
 #[test]
@@ -92,7 +98,7 @@ fn test_cli_new_project_existing_directory() {
     let temp_dir = TempDir::new().unwrap();
     let project_dir = temp_dir.path().join("existing-project");
     std::fs::create_dir_all(&project_dir).unwrap();
-    
+
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
     cmd.arg("new")
         .arg("rust")
@@ -109,7 +115,7 @@ fn test_cli_new_project_existing_directory_with_yes() {
     let temp_dir = TempDir::new().unwrap();
     let project_dir = temp_dir.path().join("existing-project");
     std::fs::create_dir_all(&project_dir).unwrap();
-    
+
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
     cmd.arg("new")
         .arg("rust")
@@ -128,7 +134,9 @@ fn test_cli_invalid_command() {
     cmd.arg("invalid-command")
         .assert()
         .failure()
-        .stderr(predicate::str::contains("unrecognized subcommand 'invalid-command'"));
+        .stderr(predicate::str::contains(
+            "unrecognized subcommand 'invalid-command'",
+        ));
 }
 
 #[test]
@@ -146,5 +154,7 @@ fn test_cli_help_short_flag() {
     cmd.arg("-h")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Create new projects optimized for Claude Code"));
+        .stdout(predicate::str::contains(
+            "Create new projects optimized for Claude Code",
+        ));
 }

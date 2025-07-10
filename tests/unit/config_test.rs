@@ -1,8 +1,8 @@
 use claudeforge::config::{Config, Defaults, TemplateConfig};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
 use tempfile::TempDir;
 use tokio::sync::Mutex;
-use std::sync::atomic::{AtomicU64, Ordering};
 
 // Mutex to prevent parallel execution of tests that modify environment variables
 static ENV_MUTEX: Mutex<()> = Mutex::const_new(());
@@ -20,7 +20,7 @@ async fn test_config_load_creates_default_when_missing() {
     let config_dir = temp_dir.path().join(format!(".config-{test_id}"));
     std::fs::create_dir_all(&config_dir).unwrap();
 
-    // Set environment variables within scope  
+    // Set environment variables within scope
     std::env::set_var("HOME", temp_dir.path());
     std::env::set_var("XDG_CONFIG_HOME", &config_dir);
 
