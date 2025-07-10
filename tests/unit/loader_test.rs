@@ -18,10 +18,7 @@ async fn test_get_template_valid_language() {
     let loader = match TemplateLoader::new().await {
         Ok(loader) => loader,
         Err(e) => {
-            eprintln!(
-                "Skipping test due to TemplateLoader creation failure: {}",
-                e
-            );
+            eprintln!("Skipping test due to TemplateLoader creation failure: {e}");
             return;
         }
     };
@@ -47,10 +44,7 @@ async fn test_list_templates() {
     let loader = match TemplateLoader::new().await {
         Ok(loader) => loader,
         Err(e) => {
-            eprintln!(
-                "Skipping test due to TemplateLoader creation failure: {}",
-                e
-            );
+            eprintln!("Skipping test due to TemplateLoader creation failure: {e}");
             return;
         }
     };
@@ -90,10 +84,7 @@ async fn test_get_or_fetch_with_cached_template() {
     let loader = match TemplateLoader::new().await {
         Ok(loader) => loader,
         Err(e) => {
-            eprintln!(
-                "Skipping test due to TemplateLoader creation failure: {}",
-                e
-            );
+            eprintln!("Skipping test due to TemplateLoader creation failure: {e}");
             std::env::remove_var("XDG_CACHE_HOME");
             return;
         }
@@ -140,10 +131,7 @@ async fn test_update_all_with_no_cached_templates() {
         Err(e) => {
             // In CI environments, TemplateLoader::new() might fail due to environment issues
             // This is acceptable - skip the test if we can't create the loader
-            eprintln!(
-                "Skipping test due to TemplateLoader creation failure: {}",
-                e
-            );
+            eprintln!("Skipping test due to TemplateLoader creation failure: {e}");
         }
     }
 
@@ -179,10 +167,7 @@ async fn test_update_all_with_cached_templates() {
     let loader = match TemplateLoader::new().await {
         Ok(loader) => loader,
         Err(e) => {
-            eprintln!(
-                "Skipping test due to TemplateLoader creation failure: {}",
-                e
-            );
+            eprintln!("Skipping test due to TemplateLoader creation failure: {e}");
             std::env::remove_var("XDG_CACHE_HOME");
             return;
         }
