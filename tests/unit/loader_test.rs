@@ -1,7 +1,11 @@
 use claudeforge::cli::Language;
 use claudeforge::template::loader::TemplateLoader;
+use std::sync::Mutex;
 use tempfile::TempDir;
 use tokio::fs;
+
+// Mutex to prevent parallel execution of tests that modify environment variables
+static ENV_MUTEX: Mutex<()> = Mutex::new(());
 
 #[tokio::test]
 async fn test_template_loader_new() {
@@ -46,6 +50,8 @@ async fn test_list_templates() {
 
 #[tokio::test]
 async fn test_get_or_fetch_with_cached_template() {
+    let _guard = ENV_MUTEX.lock().unwrap();
+
     // Create a mock cache directory
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("cache");
@@ -78,10 +84,15 @@ async fn test_get_or_fetch_with_cached_template() {
             println!("Expected error (template repo might not exist): {}", e);
         }
     }
+
+    // Clean up environment variables
+    std::env::remove_var("XDG_CACHE_HOME");
 }
 
 #[tokio::test]
 async fn test_update_all_with_no_cached_templates() {
+    let _guard = ENV_MUTEX.lock().unwrap();
+
     // Create a mock empty cache directory
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("claudeforge");
@@ -94,10 +105,15 @@ async fn test_update_all_with_no_cached_templates() {
     // Should complete without error even with no cached templates
     let result = loader.update_all().await;
     assert!(result.is_ok());
+
+    // Clean up environment variables
+    std::env::remove_var("XDG_CACHE_HOME");
 }
 
 #[tokio::test]
 async fn test_update_all_with_cached_templates() {
+    let _guard = ENV_MUTEX.lock().unwrap();
+
     // Create a mock cache directory with templates
     let temp_dir = TempDir::new().unwrap();
     let cache_dir = temp_dir.path().join("claudeforge");
@@ -134,4 +150,7 @@ async fn test_update_all_with_cached_templates() {
             println!("Expected error (template repos might not exist): {}", e);
         }
     }
+
+    // Clean up environment variables
+    std::env::remove_var("XDG_CACHE_HOME");
 }
