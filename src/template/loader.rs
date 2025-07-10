@@ -244,16 +244,16 @@ mod tests {
                 
                 let result = loader.update_all().await;
                 if let Err(ref e) = result {
-                    eprintln!("update_all() failed with error: {}", e);
+                    eprintln!("update_all() failed with error: {e}");
                 }
-                assert!(result.is_ok(), "update_all() failed: {:?}", result);
+                assert!(result.is_ok(), "update_all() failed: {result:?}");
             }
             Err(e) => {
                 // If loader creation fails, we can't test update_all, but we should not panic
-                eprintln!("TemplateLoader::new() failed: {}", e);
+                eprintln!("TemplateLoader::new() failed: {e}");
                 // In CI environments, this might be expected if dirs can't find cache directory
                 // The test should pass if loader creation fails due to environment issues
-                println!("Skipping test due to TemplateLoader creation failure: {}", e);
+                println!("Skipping test due to TemplateLoader creation failure: {e}");
             }
         }
     }

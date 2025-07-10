@@ -19,7 +19,7 @@ update_interval_days = 7
             assert!(config.defaults.default_directory.is_none());
         }
         Err(e) => {
-            println!("❌ Parsing failed: {}", e);
+            println!("❌ Parsing failed: {e}");
             panic!("Should parse successfully with missing defaults section");
         }
     }
@@ -45,7 +45,7 @@ update_interval_days = 7
             assert!(config.defaults.default_directory.is_none());
         }
         Err(e) => {
-            println!("❌ Empty defaults parsing failed: {}", e);
+            println!("❌ Empty defaults parsing failed: {e}");
             panic!("Empty defaults section should parse successfully");
         }
     }
