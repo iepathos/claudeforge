@@ -4,10 +4,11 @@ use std::path::PathBuf;
 use tokio::fs;
 
 /// User configuration structure
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Config {
     #[serde(default)]
     pub defaults: Defaults,
+    #[serde(default)]
     pub templates: TemplateConfig,
 }
 
@@ -19,25 +20,19 @@ pub struct Defaults {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(default)]
 pub struct TemplateConfig {
     pub cache_directory: Option<PathBuf>,
     pub auto_update: bool,
     pub update_interval_days: u32,
 }
 
-impl Default for Config {
+impl Default for TemplateConfig {
     fn default() -> Self {
         Self {
-            defaults: Defaults {
-                author_name: None,
-                author_email: None,
-                default_directory: None,
-            },
-            templates: TemplateConfig {
-                cache_directory: None,
-                auto_update: true,
-                update_interval_days: 7,
-            },
+            cache_directory: None,
+            auto_update: true,
+            update_interval_days: 7,
         }
     }
 }
