@@ -19,6 +19,9 @@ async fn test_config_load_creates_default_when_missing() {
     std::env::set_var("HOME", temp_dir.path());
     std::env::set_var("XDG_CONFIG_HOME", &config_dir);
 
+    // Drop the guard before await to avoid holding lock across await point
+    drop(_guard);
+
     let config = Config::load().await;
 
     // Should create default config when file doesn't exist
@@ -52,6 +55,9 @@ async fn test_config_save_and_load() {
     config.templates.cache_directory = Some(PathBuf::from("/tmp/cache"));
     config.templates.auto_update = false;
     config.templates.update_interval_days = 14;
+
+    // Drop the guard before await to avoid holding lock across await point
+    drop(_guard);
 
     // Save the config
     config.save().await.unwrap();
