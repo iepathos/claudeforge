@@ -211,7 +211,7 @@ mod tests {
         let original_home = env::var("HOME").ok();
         let original_xdg_cache = env::var("XDG_CACHE_HOME").ok();
 
-        // Set a temporary HOME directory for testing  
+        // Set a temporary HOME directory for testing
         env::set_var("HOME", temp_dir.path());
         // Also set XDG_CACHE_HOME to ensure we're using our temp directory
         let cache_path = temp_dir.path().join("cache");
@@ -238,10 +238,10 @@ mod tests {
                     .map(|entries| entries.collect::<Result<Vec<_>, _>>())
                     .unwrap_or_else(|_| Ok(vec![]))
                     .unwrap_or_default();
-                
+
                 println!("Cache directory: {:?}", loader.cache_dir);
                 println!("Cache entries: {:?}", cache_entries.len());
-                
+
                 let result = loader.update_all().await;
                 if let Err(ref e) = result {
                     eprintln!("update_all() failed with error: {e}");

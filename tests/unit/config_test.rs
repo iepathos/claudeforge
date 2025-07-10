@@ -52,8 +52,18 @@ async fn test_config_save_and_load() {
     // Set environment variables to use our temporary directory
     std::env::set_var("XDG_CONFIG_HOME", &config_dir);
     std::env::set_var("HOME", temp_dir.path());
+    
+    // Ensure no existing config file exists in our test directory
+    let expected_config_path = config_dir.join("claudeforge").join("config.toml");
+    if expected_config_path.exists() {
+        std::fs::remove_file(&expected_config_path).unwrap();
+    }
 
     let mut config = Config::default();
+    
+    // Debug: Check initial state
+    eprintln!("Initial config auto_update: {}", config.templates.auto_update);
+    
     config.defaults.author_name = Some("Test Author".to_string());
     config.defaults.author_email = Some("test@example.com".to_string());
     config.defaults.default_directory = Some(PathBuf::from("/tmp/test"));
@@ -61,11 +71,41 @@ async fn test_config_save_and_load() {
     config.templates.auto_update = false;
     config.templates.update_interval_days = 14;
 
-    // Save the config
+    // Debug: Check state after modification
+    eprintln!("After modification auto_update: {}", config.templates.auto_update);
+    eprintln!("Config to be saved: {:?}", config);
+
+    // Test serialization round-trip without file system to avoid race conditions
+    let serialized_toml = toml::to_string_pretty(&config).unwrap();
+    eprintln!("Serialized TOML:\n{}", serialized_toml);
+    
+    let deserialized_config: Config = toml::from_str(&serialized_toml).unwrap();
+    
+    // Verify the round-trip preserves our values
+    assert_eq!(deserialized_config.templates.auto_update, false, "Round-trip serialization failed for auto_update");
+    assert_eq!(deserialized_config.templates.update_interval_days, 14, "Round-trip serialization failed for update_interval_days");
+    
+    // Now test actual file save/load
     config.save().await.unwrap();
 
     // Load it back
-    let loaded_config = Config::load().await.unwrap();
+    let loaded_config = match Config::load().await {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("Config::load() failed: {}", e);
+            let config_path = claudeforge::config::get_config_path().unwrap();
+            if config_path.exists() {
+                if let Ok(corrupted_content) = tokio::fs::read_to_string(&config_path).await {
+                    eprintln!("Corrupted TOML content:\n{}", corrupted_content);
+                }
+            }
+            panic!("Config::load() failed: {}", e);
+        }
+    };
+
+    // Debug: Show what was loaded
+    eprintln!("Original auto_update: {}", config.templates.auto_update);
+    eprintln!("Loaded auto_update: {}", loaded_config.templates.auto_update);
 
     // Check that the loaded config has the saved values
     assert_eq!(loaded_config.templates.auto_update, false);
