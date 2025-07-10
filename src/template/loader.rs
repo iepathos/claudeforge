@@ -1,10 +1,11 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tokio::fs;
 use tracing::{debug, info};
 
 use crate::cli::Language;
+use crate::config::Config;
 use crate::error::ClaudeForgeError;
 use crate::git;
 use crate::template::{registry, Template};
@@ -17,9 +18,8 @@ pub struct TemplateLoader {
 
 impl TemplateLoader {
     pub async fn new() -> Result<Self> {
-        let cache_dir = dirs::cache_dir()
-            .ok_or_else(|| anyhow!("Failed to find cache directory"))?
-            .join("claudeforge");
+        let config = Config::load().await?;
+        let cache_dir = config.cache_directory()?;
 
         fs::create_dir_all(&cache_dir).await?;
 

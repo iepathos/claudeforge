@@ -77,9 +77,13 @@ impl Config {
         if let Some(cache_dir) = &self.templates.cache_directory {
             Ok(cache_dir.clone())
         } else {
-            Ok(dirs::cache_dir()
-                .ok_or_else(|| anyhow::anyhow!("Failed to find cache directory"))?
-                .join("claudeforge"))
+            let cache_dir = if let Ok(xdg_cache_home) = std::env::var("XDG_CACHE_HOME") {
+                PathBuf::from(xdg_cache_home)
+            } else {
+                dirs::cache_dir()
+                    .ok_or_else(|| anyhow::anyhow!("Failed to find cache directory"))?
+            };
+            Ok(cache_dir.join("claudeforge"))
         }
     }
 }
