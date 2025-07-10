@@ -21,8 +21,8 @@ fn test_cli_help_output() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Create new projects optimized for Claude Code"))
-        .stdout(predicate::str::contains("USAGE:"))
-        .stdout(predicate::str::contains("COMMANDS:"));
+        .stdout(predicate::str::contains("Usage:"))
+        .stdout(predicate::str::contains("Commands:"));
 }
 
 #[test]
@@ -36,8 +36,13 @@ fn test_cli_list_templates() {
 
 #[test]
 fn test_cli_update_command() {
+    // Use a temporary directory for cache to ensure clean state
+    let temp_dir = TempDir::new().unwrap();
     let mut cmd = Command::cargo_bin("claudeforge").unwrap();
-    cmd.arg("update")
+    
+    // Set XDG_CACHE_HOME to temporary directory to isolate the test
+    cmd.env("XDG_CACHE_HOME", temp_dir.path())
+        .arg("update")
         .assert()
         .success();
 }
@@ -123,7 +128,7 @@ fn test_cli_invalid_command() {
     cmd.arg("invalid-command")
         .assert()
         .failure()
-        .stderr(predicate::str::contains("'invalid-command' isn't a valid subcommand"));
+        .stderr(predicate::str::contains("unrecognized subcommand 'invalid-command'"));
 }
 
 #[test]
