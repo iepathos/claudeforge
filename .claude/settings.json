@@ -68,15 +68,5 @@
         "Bash(cargo deny check:*)"
       ],
       "deny": []
-    },
-    "environment": {},
-    "aliases": {
-      "test": "cargo test",
-      "build": "cargo build --release",
-      "lint": "cargo clippy -- -D warnings",
-      "check": "cargo check",
-      "fmt": "cargo fmt",
-      "clean": "cargo clean",
-      "doc": "cargo doc --no-deps --open"
     }
   }
