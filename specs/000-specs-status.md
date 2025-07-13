@@ -17,6 +17,7 @@ This document tracks the status of all specification documents in the project.
 | 040 | Test Coverage Improvement | ⬜ Planned |
 | 050 | Template Splicing | ⬜ Planned |
 | 060 | Template Variable Support | ⬜ Planned |
+| 070 | Template Synchronization | ⬜ Planned |
 
 ## Notes
 
