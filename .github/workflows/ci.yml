@@ -25,7 +25,7 @@ jobs:
             rust: beta
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
@@ -60,7 +60,7 @@ jobs:
     name: Cargo Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
