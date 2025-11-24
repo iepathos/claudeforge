@@ -43,7 +43,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 [dev-dependencies]
 # Testing frameworks
 tempfile = "3"
-mockall = "0.13"
+mockall = "0.14"
 proptest = "1.0"
 assert_cmd = "2.0"
 predicates = "3.0"
