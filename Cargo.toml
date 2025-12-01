@@ -49,7 +49,7 @@ assert_cmd = "2.0"
 predicates = "3.0"
 
 # Benchmarking
-criterion = "0.5"
+criterion = "0.8"
 
 [[bin]]
 name = "claudeforge"
